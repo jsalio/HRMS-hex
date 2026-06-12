@@ -58,7 +58,7 @@ export interface IRefreshTokenRepository {
 }
 
 export interface ITokenService {
-  generateAccessToken(user: AuthenticatedUser): string
+  generateAccessToken(user: AuthenticatedUser): Promise<string>
   verifyAccessToken(token: string): AuthenticatedUser
   generateRefreshToken(): string
   hashToken(token: string): string

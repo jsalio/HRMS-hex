@@ -1,10 +1,24 @@
 import { describe, it, expect, mock, beforeEach } from 'bun:test'
 import { RefreshTokenUseCase } from '../../usecases/refresh-token.usecase'
 import { User } from '../../domain/user'
+import { Role } from '../../domain/role'
 import { UnauthorizedError } from '../../domain/errors'
 import type { IUserRepository, ITokenService, IRefreshTokenRepository, StoredRefreshToken } from '../../contracts/auth'
+import type { IRoleRepository } from '../../contracts/roles'
 
 const activeUser = new User({ id: 'u1', email: 'a@b.com', passwordHash: 'h', isActive: true, roleId: 'r1' })
+const fakeRole = new Role({ id: 'r1', name: 'hr_manager', isSystem: true, permissions: [] })
+
+function makeRoleRepo(): IRoleRepository {
+  return {
+    findAll: mock(() => Promise.resolve([fakeRole])),
+    findById: mock(() => Promise.resolve(fakeRole)),
+    findByName: mock(() => Promise.resolve(null)),
+    create: mock(() => Promise.resolve(fakeRole)),
+    update: mock(() => Promise.resolve(fakeRole)),
+    delete: mock(() => Promise.resolve()),
+  }
+}
 
 const validStoredToken: StoredRefreshToken = {
   id: 'rt-1',
@@ -38,7 +52,7 @@ function makeUserRepo(): IUserRepository {
 
 function makeTokenSvc(): ITokenService {
   return {
-    generateAccessToken: mock(() => 'new.access.token'),
+    generateAccessToken: mock(() => Promise.resolve('new.access.token')),
     verifyAccessToken: mock(() => ({ id: 'u1', email: 'a@b.com', role: { id: 'r1', name: 'hr_manager', permissions: [] } })),
     generateRefreshToken: mock(() => 'new-raw-refresh'),
     hashToken: mock((t: string) => `hashed:${t}`),
@@ -49,7 +63,7 @@ describe('RefreshTokenUseCase', () => {
   let useCase: RefreshTokenUseCase
 
   beforeEach(() => {
-    useCase = new RefreshTokenUseCase(makeTokenRepo(), makeUserRepo(), makeTokenSvc())
+    useCase = new RefreshTokenUseCase(makeTokenRepo(), makeUserRepo(), makeTokenSvc(), makeRoleRepo())
   })
 
   // Test 2.7
@@ -62,7 +76,7 @@ describe('RefreshTokenUseCase', () => {
   // Test 2.8
   it('given_valid_refresh_token_when_execute_then_old_token_is_revoked_and_new_one_created', async () => {
     const tokenRepo = makeTokenRepo()
-    const uc = new RefreshTokenUseCase(tokenRepo, makeUserRepo(), makeTokenSvc())
+    const uc = new RefreshTokenUseCase(tokenRepo, makeUserRepo(), makeTokenSvc(), makeRoleRepo())
     await uc.execute({ refreshToken: 'raw-token' })
     expect(tokenRepo.revoke).toHaveBeenCalledWith('rt-1')
     expect(tokenRepo.create).toHaveBeenCalledWith(
@@ -74,7 +88,7 @@ describe('RefreshTokenUseCase', () => {
   it('given_expired_refresh_token_when_execute_then_throws_UnauthorizedError', async () => {
     const expiredToken: StoredRefreshToken = { ...validStoredToken, expiresAt: new Date(Date.now() - 1000) }
     const tokenRepo = makeTokenRepo({ findByHash: mock(() => Promise.resolve(expiredToken)) })
-    const uc = new RefreshTokenUseCase(tokenRepo, makeUserRepo(), makeTokenSvc())
+    const uc = new RefreshTokenUseCase(tokenRepo, makeUserRepo(), makeTokenSvc(), makeRoleRepo())
     await expect(uc.execute({ refreshToken: 'raw-token' })).rejects.toThrow(UnauthorizedError)
   })
 
@@ -82,7 +96,7 @@ describe('RefreshTokenUseCase', () => {
   it('given_revoked_refresh_token_when_execute_then_throws_UnauthorizedError', async () => {
     const revokedToken: StoredRefreshToken = { ...validStoredToken, revokedAt: new Date() }
     const tokenRepo = makeTokenRepo({ findByHash: mock(() => Promise.resolve(revokedToken)) })
-    const uc = new RefreshTokenUseCase(tokenRepo, makeUserRepo(), makeTokenSvc())
+    const uc = new RefreshTokenUseCase(tokenRepo, makeUserRepo(), makeTokenSvc(), makeRoleRepo())
     await expect(uc.execute({ refreshToken: 'raw-token' })).rejects.toThrow(UnauthorizedError)
   })
 })

@@ -16,7 +16,7 @@ export class RefreshTokenUseCase {
     private readonly tokenRepo: IRefreshTokenRepository,
     private readonly userRepo: IUserRepository,
     private readonly tokenSvc: ITokenService,
-    private readonly roleRepo?: IRoleRepository,
+    private readonly roleRepo: IRoleRepository,
   ) {}
 
   async execute(input: RefreshInput): Promise<RefreshResult> {
@@ -31,6 +31,9 @@ export class RefreshTokenUseCase {
     if (!user) throw new UnauthorizedError('User not found')
     user.assertCanAuthenticate()
 
+    const resolvedRole = await this.roleRepo.findById(user.roleId)
+    if (!resolvedRole) throw new UnauthorizedError('Role not found')
+
     // Rotation: revoke old, issue new
     await this.tokenRepo.revoke(stored.id)
 
@@ -41,14 +44,17 @@ export class RefreshTokenUseCase {
 
     await this.tokenRepo.create({ userId: user.id, tokenHash: newHash, expiresAt })
 
-    // Build AuthenticatedUser with minimal info for access token
     const authenticatedUser: AuthenticatedUser = {
       id: user.id,
       email: user.email,
-      role: { id: user.roleId, name: '', permissions: [] },
+      role: {
+        id: resolvedRole.id,
+        name: resolvedRole.name,
+        permissions: resolvedRole.toAuthPermissions(),
+      },
     }
 
-    const access_token = this.tokenSvc.generateAccessToken(authenticatedUser)
+    const access_token = await this.tokenSvc.generateAccessToken(authenticatedUser)
 
     return { access_token, refresh_token: newRawRefresh }
   }

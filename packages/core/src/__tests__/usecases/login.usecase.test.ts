@@ -50,7 +50,7 @@ function makeRoleRepo(overrides: Partial<IRoleRepository> = {}): IRoleRepository
 
 function makeTokenSvc(): ITokenService {
   return {
-    generateAccessToken: mock(() => 'access.token.here'),
+    generateAccessToken: mock(() => Promise.resolve('access.token.here')),
     verifyAccessToken: mock(() => ({ id: 'user-1', email: 'hr@acme.com', role: { id: 'role-1', name: 'hr_manager', permissions: [] } })),
     generateRefreshToken: mock(() => 'raw-refresh-token'),
     hashToken: mock((t: string) => `hashed:${t}`),

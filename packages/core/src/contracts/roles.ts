@@ -24,7 +24,7 @@ export interface RolePermission {
 
 export interface CreateRoleData {
   name: string
-  permissions: Omit<RolePermission, never>[]
+  permissions: RolePermission[]
 }
 
 export interface UpdateRoleData {

@@ -16,7 +16,7 @@ const tokenSvc = new JwtTokenService(jwtSecret)
 
 // Use cases
 export const loginUseCase        = new LoginUseCase(userRepo, roleRepo, tokenSvc, refreshTokenRepo)
-export const refreshTokenUseCase = new RefreshTokenUseCase(refreshTokenRepo, userRepo, tokenSvc)
+export const refreshTokenUseCase = new RefreshTokenUseCase(refreshTokenRepo, userRepo, tokenSvc, roleRepo)
 export const manageRolesUseCase  = new ManageRolesUseCase(roleRepo)
 
 // Expose repos needed by controllers

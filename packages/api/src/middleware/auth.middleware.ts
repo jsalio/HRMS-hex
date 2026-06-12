@@ -4,7 +4,9 @@ import { verifyJwt } from '../services/jwt-token.service'
 
 // Read secret lazily so tests can set process.env.JWT_SECRET before first request
 function getSecret(): Uint8Array {
-  return new TextEncoder().encode(process.env.JWT_SECRET ?? '')
+  const s = process.env.JWT_SECRET
+  if (!s) throw new Error('JWT_SECRET is not set')
+  return new TextEncoder().encode(s)
 }
 
 export const authMiddleware = createMiddleware(async (c: Context, next: Next) => {

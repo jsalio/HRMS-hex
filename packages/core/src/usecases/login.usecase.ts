@@ -43,7 +43,7 @@ export class LoginUseCase {
       },
     }
 
-    const access_token = this.tokenSvc.generateAccessToken(authenticatedUser)
+    const access_token = await this.tokenSvc.generateAccessToken(authenticatedUser)
     const rawRefresh = this.tokenSvc.generateRefreshToken()
     const tokenHash = this.tokenSvc.hashToken(rawRefresh)
 

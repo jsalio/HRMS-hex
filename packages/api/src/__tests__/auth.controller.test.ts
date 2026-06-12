@@ -40,7 +40,7 @@ function buildApp(overrides: {
   }
 
   const tokenSvc: ITokenService = {
-    generateAccessToken: mock(() => 'at'),
+    generateAccessToken: mock(() => Promise.resolve('at')),
     verifyAccessToken: mock(() => fakeUser),
     generateRefreshToken: mock(() => 'rt'),
     hashToken: mock((t: string) => `h:${t}`),

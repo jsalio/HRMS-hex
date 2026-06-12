@@ -4,7 +4,13 @@ import { randomBytes } from 'crypto'
 import type { ITokenService, AuthenticatedUser } from '@hrms/core/contracts/auth'
 import { UnauthorizedError } from '@hrms/core'
 
-const ACCESS_TOKEN_TTL = process.env.ACCESS_TOKEN_TTL ?? '15m'
+function parseTokenTtl(raw: string | undefined): string {
+  const ttl = raw ?? '15m'
+  if (!/^\d+[smhd]$/.test(ttl)) throw new Error(`Invalid ACCESS_TOKEN_TTL format: "${ttl}". Use format like 15m, 1h, 7d.`)
+  return ttl
+}
+
+const ACCESS_TOKEN_TTL = parseTokenTtl(process.env.ACCESS_TOKEN_TTL)
 
 export class JwtTokenService implements ITokenService {
   private readonly secretBytes: Uint8Array
@@ -16,12 +22,12 @@ export class JwtTokenService implements ITokenService {
     this.secretBytes = new TextEncoder().encode(secret)
   }
 
-  generateAccessToken(user: AuthenticatedUser): string {
+  async generateAccessToken(user: AuthenticatedUser): Promise<string> {
     return new SignJWT({ sub: user.id, email: user.email, role: user.role })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime(ACCESS_TOKEN_TTL)
-      .sign(this.secretBytes) as unknown as string
+      .sign(this.secretBytes)
   }
 
   verifyAccessToken(token: string): AuthenticatedUser {
