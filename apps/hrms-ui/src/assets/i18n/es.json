@@ -2,9 +2,20 @@
   "auth": {
     "login": {
       "title": "Iniciar sesión",
+      "welcome": "Bienvenido",
+      "subtitle": "Inicia sesión en tu cuenta",
+      "brand_subtitle": "Gestión de Recursos Humanos",
       "email": "Correo electrónico",
+      "email_placeholder": "usuario@empresa.com",
       "password": "Contraseña",
+      "show_password": "Mostrar contraseña",
+      "hide_password": "Ocultar contraseña",
       "submit": "Entrar",
+      "feature": {
+        "secure": "Acceso seguro",
+        "team": "Gestión de equipos",
+        "reports": "Informes inteligentes"
+      },
       "error": {
         "invalid_credentials": "Correo o contraseña incorrectos"
       }
@@ -12,6 +23,9 @@
   },
   "shell": {
     "logout": "Cerrar sesión",
+    "brand_subtitle": "Super Admin",
+    "search_placeholder": "Buscar...",
+    "notifications": "Notificaciones",
     "nav": {
       "dashboard": "Panel",
       "employees": "Empleados",
@@ -24,16 +38,32 @@
       "reports": "Informes",
       "notifications": "Notificaciones",
       "settings": "Configuración"
+    },
+    "nav_section": {
+      "configuration": "Configuración"
     }
   },
   "roles": {
+    "title": "Gestión de Roles",
+    "subtitle": "Configura niveles de acceso y permisos por módulo para tu equipo.",
+    "create": "Crear Rol",
     "empty": "No hay roles definidos",
+    "available": "Roles disponibles",
+    "permissions_subtitle": "Control de permisos granulares por módulo",
+    "system_note": "El rol Super Admin tiene acceso total por defecto. Las modificaciones a este rol pueden afectar la funcionalidad del sistema.",
     "form": {
-      "name": "Nombre del rol"
+      "name": "Nombre del rol",
+      "permissions": "Permisos por módulo"
     },
     "list": {
       "name": "Nombre",
-      "actions": "Acciones"
+      "type": "Tipo",
+      "actions": "Acciones",
+      "system": "Sistema",
+      "custom": "Personalizado"
+    },
+    "perms": {
+      "module": "Módulo"
     },
     "permissions": {
       "canView": "Ver",
@@ -41,6 +71,12 @@
       "canEdit": "Editar",
       "canDelete": "Eliminar",
       "canExport": "Exportar"
+    },
+    "desc": {
+      "super_admin": "Acceso total al sistema",
+      "hr_manager": "Gestión de empleados y RRHH",
+      "finance": "Nómina y seguimiento financiero",
+      "employee": "Acceso propio limitado"
     }
   },
   "modules": {
@@ -57,7 +93,8 @@
     "notifications": "Notificaciones"
   },
   "common": {
-    "save": "Guardar",
+    "save": "Guardar cambios",
+    "discard": "Descartar",
     "cancel": "Cancelar",
     "edit": "Editar",
     "delete": "Eliminar",

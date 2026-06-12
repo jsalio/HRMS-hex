@@ -2,9 +2,20 @@
   "auth": {
     "login": {
       "title": "Sign in",
+      "welcome": "Welcome back",
+      "subtitle": "Sign in to your account",
+      "brand_subtitle": "Human Resources Management",
       "email": "Email address",
+      "email_placeholder": "user@company.com",
       "password": "Password",
+      "show_password": "Show password",
+      "hide_password": "Hide password",
       "submit": "Sign in",
+      "feature": {
+        "secure": "Secure access",
+        "team": "Team management",
+        "reports": "Smart reports"
+      },
       "error": {
         "invalid_credentials": "Invalid email or password"
       }
@@ -12,6 +23,12 @@
   },
   "shell": {
     "logout": "Sign out",
+    "brand_subtitle": "Super Admin",
+    "search_placeholder": "Search...",
+    "notifications": "Notifications",
+    "nav_section": {
+      "configuration": "Configuration"
+    },
     "nav": {
       "dashboard": "Dashboard",
       "employees": "Employees",
@@ -27,13 +44,26 @@
     }
   },
   "roles": {
+    "title": "Role Management",
+    "subtitle": "Configure access levels and permissions by module for your team.",
+    "create": "Create Role",
     "empty": "No roles defined",
+    "available": "Available roles",
+    "permissions_subtitle": "Granular permission control per module",
+    "system_note": "The Super Admin role has full access by default. Changes to this role may affect system functionality.",
     "form": {
-      "name": "Role name"
+      "name": "Role name",
+      "permissions": "Permissions by module"
     },
     "list": {
       "name": "Name",
-      "actions": "Actions"
+      "type": "Type",
+      "actions": "Actions",
+      "system": "System",
+      "custom": "Custom"
+    },
+    "perms": {
+      "module": "Module"
     },
     "permissions": {
       "canView": "View",
@@ -41,6 +71,12 @@
       "canEdit": "Edit",
       "canDelete": "Delete",
       "canExport": "Export"
+    },
+    "desc": {
+      "super_admin": "Full system access",
+      "hr_manager": "Employee and HR management",
+      "finance": "Payroll and financial tracking",
+      "employee": "Limited self-access"
     }
   },
   "modules": {
@@ -57,7 +93,8 @@
     "notifications": "Notifications"
   },
   "common": {
-    "save": "Save",
+    "save": "Save changes",
+    "discard": "Discard",
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",

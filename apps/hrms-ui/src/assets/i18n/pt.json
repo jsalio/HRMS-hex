@@ -2,9 +2,20 @@
   "auth": {
     "login": {
       "title": "Entrar",
+      "welcome": "Bem-vindo",
+      "subtitle": "Entre na sua conta",
+      "brand_subtitle": "Gestão de Recursos Humanos",
       "email": "E-mail",
+      "email_placeholder": "usuario@empresa.com",
       "password": "Senha",
+      "show_password": "Mostrar senha",
+      "hide_password": "Ocultar senha",
       "submit": "Entrar",
+      "feature": {
+        "secure": "Acesso seguro",
+        "team": "Gestão de equipes",
+        "reports": "Relatórios inteligentes"
+      },
       "error": {
         "invalid_credentials": "E-mail ou senha inválidos"
       }
@@ -12,6 +23,12 @@
   },
   "shell": {
     "logout": "Sair",
+    "brand_subtitle": "Super Admin",
+    "search_placeholder": "Buscar...",
+    "notifications": "Notificações",
+    "nav_section": {
+      "configuration": "Configuração"
+    },
     "nav": {
       "dashboard": "Painel",
       "employees": "Funcionários",
@@ -27,13 +44,26 @@
     }
   },
   "roles": {
+    "title": "Gestão de Perfis",
+    "subtitle": "Configure níveis de acesso e permissões por módulo para sua equipe.",
+    "create": "Criar Perfil",
     "empty": "Nenhum perfil definido",
+    "available": "Perfis disponíveis",
+    "permissions_subtitle": "Controle granular de permissões por módulo",
+    "system_note": "O perfil Super Admin tem acesso total por padrão. Modificações neste perfil podem afetar a funcionalidade do sistema.",
     "form": {
-      "name": "Nome do perfil"
+      "name": "Nome do perfil",
+      "permissions": "Permissões por módulo"
     },
     "list": {
       "name": "Nome",
-      "actions": "Ações"
+      "type": "Tipo",
+      "actions": "Ações",
+      "system": "Sistema",
+      "custom": "Personalizado"
+    },
+    "perms": {
+      "module": "Módulo"
     },
     "permissions": {
       "canView": "Visualizar",
@@ -41,6 +71,12 @@
       "canEdit": "Editar",
       "canDelete": "Excluir",
       "canExport": "Exportar"
+    },
+    "desc": {
+      "super_admin": "Acesso total ao sistema",
+      "hr_manager": "Gestão de funcionários e RH",
+      "finance": "Folha e acompanhamento financeiro",
+      "employee": "Acesso próprio limitado"
     }
   },
   "modules": {
@@ -57,7 +93,8 @@
     "notifications": "Notificações"
   },
   "common": {
-    "save": "Salvar",
+    "save": "Salvar alterações",
+    "discard": "Descartar",
     "cancel": "Cancelar",
     "edit": "Editar",
     "delete": "Excluir",

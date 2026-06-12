@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy only manifests — node_modules installed inside container (isolated from host)
+COPY package.json ./
+
+# Install with npm (not bun) — resolves TypeScript ~5.5.0 from package.json
+# without being affected by the monorepo root's TypeScript 5.9.x
+RUN npm install
+
+# Copy Angular config files (not src — that is volume-mounted for hot reload)
+COPY angular.json tsconfig.json tsconfig.app.json tsconfig.spec.json proxy.conf.json ./
+
+EXPOSE 4200
+
+CMD ["node_modules/.bin/ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]

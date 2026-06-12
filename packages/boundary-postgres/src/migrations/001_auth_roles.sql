@@ -103,3 +103,12 @@ CROSS JOIN (VALUES
 ) AS m(module, can_view, can_create, can_edit, can_delete, can_export)
 WHERE r.name = 'employee'
 ON CONFLICT (role_id, module) DO NOTHING;
+
+-- Seed: dev super_admin user (password: Admin1234!) — idempotent
+-- Hash algorithm: argon2id (Bun.password default)
+INSERT INTO users (email, password_hash, role_id)
+SELECT 'admin@hrms.com',
+       '$argon2id$v=19$m=65536,t=2,p=1$dGglAkZl1mHf02OExZi1RxyLk/qMVpU8jDw0hbvgt08$kl0VZI8RDya8CTYQeVLmwFtZ+xR0lN2oqwG98wtcuoI',
+       id
+FROM roles WHERE name = 'super_admin'
+ON CONFLICT (email) DO NOTHING;
