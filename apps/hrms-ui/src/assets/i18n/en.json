@@ -1,0 +1,73 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "error": {
+        "invalid_credentials": "Invalid email or password"
+      }
+    }
+  },
+  "shell": {
+    "logout": "Sign out",
+    "nav": {
+      "dashboard": "Dashboard",
+      "employees": "Employees",
+      "attendance": "Attendance",
+      "absences": "Absences",
+      "documents": "Documents",
+      "payroll": "Payroll",
+      "benefits": "Benefits",
+      "recruitment": "Recruitment",
+      "reports": "Reports",
+      "notifications": "Notifications",
+      "settings": "Settings"
+    }
+  },
+  "roles": {
+    "empty": "No roles defined",
+    "form": {
+      "name": "Role name"
+    },
+    "list": {
+      "name": "Name",
+      "actions": "Actions"
+    },
+    "permissions": {
+      "canView": "View",
+      "canCreate": "Create",
+      "canEdit": "Edit",
+      "canDelete": "Delete",
+      "canExport": "Export"
+    }
+  },
+  "modules": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "attendance": "Attendance",
+    "payroll": "Payroll",
+    "reports": "Reports",
+    "settings": "Settings",
+    "documents": "Documents",
+    "absences": "Absences",
+    "benefits": "Benefits",
+    "recruitment": "Recruitment",
+    "notifications": "Notifications"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "validation": {
+      "required": "This field is required",
+      "email_format": "Please enter a valid email"
+    },
+    "error": {
+      "generic": "An error occurred. Please try again."
+    }
+  }
+}

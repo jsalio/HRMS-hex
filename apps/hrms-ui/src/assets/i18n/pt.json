@@ -1,0 +1,73 @@
+{
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "email": "E-mail",
+      "password": "Senha",
+      "submit": "Entrar",
+      "error": {
+        "invalid_credentials": "E-mail ou senha inválidos"
+      }
+    }
+  },
+  "shell": {
+    "logout": "Sair",
+    "nav": {
+      "dashboard": "Painel",
+      "employees": "Funcionários",
+      "attendance": "Presença",
+      "absences": "Ausências",
+      "documents": "Documentos",
+      "payroll": "Folha de pagamento",
+      "benefits": "Benefícios",
+      "recruitment": "Recrutamento",
+      "reports": "Relatórios",
+      "notifications": "Notificações",
+      "settings": "Configurações"
+    }
+  },
+  "roles": {
+    "empty": "Nenhum perfil definido",
+    "form": {
+      "name": "Nome do perfil"
+    },
+    "list": {
+      "name": "Nome",
+      "actions": "Ações"
+    },
+    "permissions": {
+      "canView": "Visualizar",
+      "canCreate": "Criar",
+      "canEdit": "Editar",
+      "canDelete": "Excluir",
+      "canExport": "Exportar"
+    }
+  },
+  "modules": {
+    "dashboard": "Painel",
+    "employees": "Funcionários",
+    "attendance": "Presença",
+    "payroll": "Folha de pagamento",
+    "reports": "Relatórios",
+    "settings": "Configurações",
+    "documents": "Documentos",
+    "absences": "Ausências",
+    "benefits": "Benefícios",
+    "recruitment": "Recrutamento",
+    "notifications": "Notificações"
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "loading": "Carregando...",
+    "validation": {
+      "required": "Este campo é obrigatório",
+      "email_format": "Informe um e-mail válido"
+    },
+    "error": {
+      "generic": "Ocorreu um erro. Tente novamente."
+    }
+  }
+}

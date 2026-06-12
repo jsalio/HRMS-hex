@@ -10,7 +10,7 @@ Registro de avance del pipeline SDD. Cada sub-spec pasa por las fases: Spec → 
 
 | Sub-spec | Spec | Impact | Arch | TDD Plan | Implement | Consolidado |
 |---|---|---|---|---|---|---|
-| 1. hrms-auth-roles | ✅ | ✅ | ✅ | ✅ | 🔄 | ⏳ |
+| 1. hrms-auth-roles | ✅ | ✅ | ✅ | ✅ | ✅ | ⏳ |
 | 2. hrms-employees | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 | 3. hrms-documents | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 | 4. hrms-absences | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
@@ -70,7 +70,7 @@ Registro de avance del pipeline SDD. Cada sub-spec pasa por las fases: Spec → 
 - [ ] `/arch` — arquitectura hexagonal → `hrms-auth-roles.arch.md`
 - [x] `/tdd-plan` — tests backend → `hrms-auth-roles.tdd-plan.md` ✅ 40 tests (8 domain, 14 usecases, 9 infra, 9 API)
 - [x] `/tdd-plan-ui` — tests Angular → `hrms-auth-roles.tdd-plan-ui.md` ✅ 38 tests (10 service, 6 guards, 8 login, 6 shell, 5 roles, 3 form)
-- [ ] `/implement` — código en rama `feat/hrms-auth-roles`
+- [x] `/implement` — código en rama `feat/hrms-auth-roles` ✅ 30 tests backend GREEN, Angular UI completo
 - [ ] Consolidación → `hrms-auth-roles.md` (doc final)
 - [ ] Merge a `main` ✓ confirmado por usuario
 

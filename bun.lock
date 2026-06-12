@@ -1,0 +1,54 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "hrms-hex",
+      "devDependencies": {
+        "typescript": "^5.4.5",
+      },
+    },
+    "packages/api": {
+      "name": "@hrms/api",
+      "version": "0.0.1",
+      "dependencies": {
+        "@hono/zod-validator": "^0.4.1",
+        "@hrms/boundary-postgres": "workspace:*",
+        "@hrms/core": "workspace:*",
+        "hono": "^4.4.0",
+        "jose": "^5.4.1",
+        "zod": "^3.23.8",
+      },
+    },
+    "packages/boundary-postgres": {
+      "name": "@hrms/boundary-postgres",
+      "version": "0.0.1",
+      "dependencies": {
+        "@hrms/core": "workspace:*",
+        "postgres": "^3.4.4",
+      },
+    },
+    "packages/core": {
+      "name": "@hrms/core",
+      "version": "0.0.1",
+    },
+  },
+  "packages": {
+    "@hono/zod-validator": ["@hono/zod-validator@0.4.3", "", { "peerDependencies": { "hono": ">=3.9.0", "zod": "^3.19.1" } }, "sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ=="],
+
+    "@hrms/api": ["@hrms/api@workspace:packages/api"],
+
+    "@hrms/boundary-postgres": ["@hrms/boundary-postgres@workspace:packages/boundary-postgres"],
+
+    "@hrms/core": ["@hrms/core@workspace:packages/core"],
+
+    "hono": ["hono@4.12.25", "", {}, "sha512-2NFaIyNVgJmBs/ecmtGzlmluTFs5cHEWGTdu0t1HBwYzoGXOL5nUQBRMXsXWla5i4KkG//QMzVP88m1+I3fdAQ=="],
+
+    "jose": ["jose@5.10.0", "", {}, "sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg=="],
+
+    "postgres": ["postgres@3.4.9", "", {}, "sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw=="],
+
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+
+    "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
+  }
+}

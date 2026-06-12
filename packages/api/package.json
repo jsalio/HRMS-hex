@@ -1,0 +1,18 @@
+{
+  "name": "@hrms/api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "test": "bun test src/__tests__/**/*.test.ts"
+  },
+  "dependencies": {
+    "@hrms/core": "workspace:*",
+    "@hrms/boundary-postgres": "workspace:*",
+    "hono": "^4.4.0",
+    "jose": "^5.4.1",
+    "zod": "^3.23.8",
+    "@hono/zod-validator": "^0.4.1"
+  }
+}
