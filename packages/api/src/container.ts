@@ -1,11 +1,11 @@
 import { sql } from '@hrms/boundary-postgres'
 import {
   UserRepository, RoleRepository, RefreshTokenRepository,
-  EmployeeRepository, DepartmentRepository,
+  EmployeeRepository, DepartmentRepository, DocumentRepository,
 } from '@hrms/boundary-postgres'
 import {
   LoginUseCase, RefreshTokenUseCase, ManageRolesUseCase,
-  ManageEmployeesUseCase, ManageDepartmentsUseCase,
+  ManageEmployeesUseCase, ManageDepartmentsUseCase, ManageDocumentsUseCase,
 } from '@hrms/core'
 import { JwtTokenService } from './services/jwt-token.service'
 import { BunPasswordService } from './services/bun-password.service'
@@ -19,6 +19,7 @@ const roleRepo         = new RoleRepository(sql)
 const refreshTokenRepo = new RefreshTokenRepository(sql)
 const employeeRepo     = new EmployeeRepository(sql)
 const deptRepo         = new DepartmentRepository(sql)
+const documentRepo     = new DocumentRepository(sql)
 
 // Services
 const tokenSvc    = new JwtTokenService(jwtSecret)
@@ -32,6 +33,7 @@ export const manageRolesUseCase  = new ManageRolesUseCase(roleRepo)
 // Use cases — employees
 export const manageEmployeesUseCase   = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 export const manageDepartmentsUseCase = new ManageDepartmentsUseCase(deptRepo)
+export const manageDocumentsUseCase   = new ManageDocumentsUseCase(documentRepo, employeeRepo)
 
 // Expose repos needed by controllers
 export { refreshTokenRepo, tokenSvc }

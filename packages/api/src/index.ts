@@ -2,13 +2,14 @@ import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import {
   loginUseCase, refreshTokenUseCase, manageRolesUseCase,
-  manageEmployeesUseCase, manageDepartmentsUseCase,
+  manageEmployeesUseCase, manageDepartmentsUseCase, manageDocumentsUseCase,
   refreshTokenRepo, tokenSvc,
 } from './container'
 import { createAuthController } from './controllers/auth.controller'
 import { createRolesController } from './controllers/roles.controller'
 import { createEmployeesController } from './controllers/employees.controller'
 import { createDepartmentsController } from './controllers/departments.controller'
+import { createDocumentsController } from './controllers/documents.controller'
 
 const app = new Hono()
 
@@ -18,6 +19,10 @@ app.route('/auth',        createAuthController(loginUseCase, refreshTokenUseCase
 app.route('/roles',       createRolesController(manageRolesUseCase))
 app.route('/employees',   createEmployeesController(manageEmployeesUseCase))
 app.route('/departments', createDepartmentsController(manageDepartmentsUseCase))
+
+const docsCtrl = createDocumentsController(manageDocumentsUseCase)
+app.route('/employees', docsCtrl.employeeRoutes)
+app.route('/documents', docsCtrl.documentRoutes)
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 
