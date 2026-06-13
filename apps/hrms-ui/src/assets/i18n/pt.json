@@ -169,6 +169,69 @@
     },
     "error": {
       "generic": "Ocorreu um erro. Tente novamente."
+    },
+    "optional": "Opcional",
+    "cancel": "Cancelar"
+  },
+  "documents": {
+    "title": "Documentos",
+    "subtitle": "Gestão de documentos do colaborador",
+    "upload": "Enviar documento",
+    "empty": "Este colaborador não possui documentos",
+    "expiring_soon": "Vencendo em breve",
+    "status": {
+      "PENDING": "Pendente",
+      "SIGNED": "Assinado",
+      "ARCHIVED": "Arquivado"
+    },
+    "type": {
+      "contract": "Contrato",
+      "nda": "NDA",
+      "policy": "Política",
+      "certificate": "Certificado",
+      "other": "Outro"
+    },
+    "filters": {
+      "all_status": "Todos os estados",
+      "all_types": "Todos os tipos"
+    },
+    "table": {
+      "name": "Nome",
+      "type": "Tipo",
+      "status": "Estado",
+      "expires_at": "Validade",
+      "actions": "Ações"
+    },
+    "fields": {
+      "name": "Nome do documento",
+      "type": "Tipo",
+      "file_url": "URL do arquivo",
+      "expires_at": "Data de validade"
+    },
+    "actions": {
+      "sign": "Assinar",
+      "archive": "Arquivar",
+      "renew": "Renovar",
+      "upload": "Enviar"
+    },
+    "sign_modal": {
+      "title": "Confirmar assinatura",
+      "subtitle": "Assinando: {{name}}",
+      "hash_label": "Hash SHA-256 do arquivo"
+    },
+    "upload_modal": {
+      "title": "Enviar documento"
+    },
+    "renew_modal": {
+      "title": "Renovar documento",
+      "subtitle": "Renovando: {{name}}"
+    },
+    "error": {
+      "load": "Erro ao carregar documentos",
+      "sign": "Erro ao assinar documento",
+      "archive": "Erro ao arquivar documento",
+      "create": "Erro ao enviar documento",
+      "renew": "Erro ao renovar documento"
     }
   }
 }

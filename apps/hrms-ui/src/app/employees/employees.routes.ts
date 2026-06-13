@@ -17,4 +17,8 @@ export const EMPLOYEES_ROUTES: Routes = [
     path: ':id/edit',
     loadComponent: () => import('./employee-form-page.component').then(m => m.EmployeeFormPageComponent),
   },
+  {
+    path: ':id/documents',
+    loadComponent: () => import('../documents/documents-page.component').then(m => m.DocumentsPageComponent),
+  },
 ]

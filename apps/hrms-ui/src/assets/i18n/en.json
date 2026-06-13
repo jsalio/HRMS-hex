@@ -169,6 +169,69 @@
     },
     "error": {
       "generic": "An error occurred. Please try again."
+    },
+    "optional": "Optional",
+    "cancel": "Cancel"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Employee document management",
+    "upload": "Upload document",
+    "empty": "This employee has no documents",
+    "expiring_soon": "Expiring soon",
+    "status": {
+      "PENDING": "Pending",
+      "SIGNED": "Signed",
+      "ARCHIVED": "Archived"
+    },
+    "type": {
+      "contract": "Contract",
+      "nda": "NDA",
+      "policy": "Policy",
+      "certificate": "Certificate",
+      "other": "Other"
+    },
+    "filters": {
+      "all_status": "All statuses",
+      "all_types": "All types"
+    },
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "expires_at": "Expiry date",
+      "actions": "Actions"
+    },
+    "fields": {
+      "name": "Document name",
+      "type": "Type",
+      "file_url": "File URL",
+      "expires_at": "Expiry date"
+    },
+    "actions": {
+      "sign": "Sign",
+      "archive": "Archive",
+      "renew": "Renew",
+      "upload": "Upload"
+    },
+    "sign_modal": {
+      "title": "Confirm signature",
+      "subtitle": "Signing: {{name}}",
+      "hash_label": "SHA-256 file hash"
+    },
+    "upload_modal": {
+      "title": "Upload document"
+    },
+    "renew_modal": {
+      "title": "Renew document",
+      "subtitle": "Renewing: {{name}}"
+    },
+    "error": {
+      "load": "Error loading documents",
+      "sign": "Error signing document",
+      "archive": "Error archiving document",
+      "create": "Error uploading document",
+      "renew": "Error renewing document"
     }
   }
 }

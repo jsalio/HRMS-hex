@@ -32,6 +32,16 @@ Fuente completa: `docs/specs/hrms-employees.security.md`
 
 ---
 
+## Sub-spec 3 — hrms-documents (2026-06-13)
+
+| # | ID | Severidad | Descripción | Archivo(s) | Prioridad | Esfuerzo |
+|---|---|---|---|---|---|---|
+| 16 | SEC-D1 | 🟡 | `file_url` se renderiza como `[href]` — Angular sanitiza automáticamente, pero si se agrega `bypassSecurityTrustUrl` en el futuro se abre XSS | `apps/hrms-ui/src/app/documents/documents-page.component.ts` | 🟡 | XS |
+| 17 | SEC-D2 | 🟡 | `DocumentRepository.findExpiring` no valida que `daysFromNow >= 0`; el cap está en el controlador pero no en el repositorio (violación de defense-in-depth) | `packages/boundary-postgres/src/repositories/document.repository.ts:findExpiring` | 🟡 | XS |
+| 18 | SEC-D3 | 🟠 | `fileHash` aceptado del cliente sin verificar que sea hex válido (solo valida longitud 64). Un actor malicioso puede registrar cualquier string de 64 chars como firma válida, comprometiendo la inmutabilidad del documento | `packages/api/src/controllers/documents.controller.ts:signDocumentSchema` | 🟠 | S |
+
+---
+
 ## Grupos de trabajo
 
 ### Grupo A — Quick wins (XS, antes del primer deploy)
