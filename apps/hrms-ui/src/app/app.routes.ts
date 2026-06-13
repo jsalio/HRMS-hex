@@ -26,6 +26,11 @@ export const routes: Routes = [
         canActivate: [permissionGuard(AppModule.SETTINGS, 'canView')],
         loadComponent: () => import('./roles/roles-page.component').then(m => m.RolesPageComponent),
       },
+      {
+        path: 'employees',
+        canActivate: [permissionGuard(AppModule.EMPLOYEES, 'canView')],
+        loadChildren: () => import('./employees/employees.routes').then(m => m.EMPLOYEES_ROUTES),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

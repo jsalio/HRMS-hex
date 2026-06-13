@@ -1,11 +1,19 @@
 import { sql } from './client'
-import { readFileSync } from 'fs'
+import { readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 
-const migrationPath = join(import.meta.dir, 'migrations', '001_auth_roles.sql')
-const migrationSql = readFileSync(migrationPath, 'utf-8')
+const migrationsDir = join(import.meta.dir, 'migrations')
 
-console.log('Running migration 001_auth_roles...')
-await sql.unsafe(migrationSql)
-console.log('Migration complete.')
+const files = readdirSync(migrationsDir)
+  .filter(f => f.endsWith('.sql'))
+  .sort()
+
+for (const file of files) {
+  const migrationSql = readFileSync(join(migrationsDir, file), 'utf-8')
+  console.log(`Running migration ${file}...`)
+  await sql.unsafe(migrationSql)
+  console.log(`✓ ${file}`)
+}
+
+console.log('All migrations complete.')
 await sql.end()

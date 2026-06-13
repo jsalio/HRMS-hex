@@ -92,6 +92,70 @@
     "recruitment": "Reclutamiento",
     "notifications": "Notificaciones"
   },
+  "employees": {
+    "title": "Empleados",
+    "subtitle": "Gestiona el expediente de empleados de tu organización.",
+    "new": "Nuevo empleado",
+    "export": "Exportar",
+    "search_placeholder": "Buscar por nombre, correo...",
+    "empty": "No hay empleados registrados",
+    "filters": {
+      "all_departments": "Todos los departamentos",
+      "all_statuses": "Todos los estados"
+    },
+    "status": {
+      "ACTIVE": "Activo",
+      "REMOTE": "Remoto",
+      "ON_LEAVE": "Con permiso",
+      "INACTIVE": "Inactivo"
+    },
+    "table": {
+      "name": "Nombre",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "status": "Estado",
+      "hire_date": "Fecha ingreso"
+    },
+    "fields": {
+      "full_name": "Nombre completo",
+      "document_id": "Documento",
+      "corporate_email": "Correo corporativo",
+      "corporate_email_placeholder": "nombre@empresa.com",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "salary": "Salario",
+      "hire_date": "Fecha de ingreso",
+      "termination_date": "Fecha de egreso",
+      "status": "Estado"
+    },
+    "detail": {
+      "tab_info": "Información",
+      "tab_onboarding": "Onboarding",
+      "personal_info": "Información personal",
+      "job_info": "Información laboral"
+    },
+    "onboarding": {
+      "documents": "Documentación",
+      "equipment": "Equipos",
+      "training": "Capacitación",
+      "access": "Accesos",
+      "complete": "Completado"
+    },
+    "actions": {
+      "terminate": "Dar de baja"
+    },
+    "terminate": {
+      "title": "Dar de baja al empleado",
+      "confirm_text": "¿Confirmas dar de baja a {{name}}? Esta acción no se puede deshacer."
+    },
+    "form": {
+      "title_create": "Nuevo empleado",
+      "title_edit": "Editar empleado",
+      "subtitle": "Completa la información del expediente.",
+      "create_btn": "Crear empleado",
+      "error_save": "No se pudo guardar. Intente nuevamente."
+    }
+  },
   "common": {
     "save": "Guardar cambios",
     "discard": "Descartar",
