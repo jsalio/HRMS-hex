@@ -4,8 +4,11 @@ import { User } from '../../domain/user'
 import { Role } from '../../domain/role'
 import { AppModule } from '../../contracts/roles'
 import { UnauthorizedError } from '../../domain/errors'
-import type { IUserRepository, ITokenService, IRefreshTokenRepository } from '../../contracts/auth'
+import type { IUserRepository, ITokenService, IRefreshTokenRepository, IPasswordService } from '../../contracts/auth'
 import type { IRoleRepository } from '../../contracts/roles'
+
+const VALID_PASSWORD = 'secret123'
+const FAKE_HASH = 'hashed:secret123'
 
 const fakeRole = new Role({
   id: 'role-1',
@@ -19,8 +22,16 @@ const fakeRole = new Role({
 const fakeUser = new User({
   id: 'user-1',
   email: 'hr@acme.com',
-  passwordHash: await Bun.password.hash('secret123'),
+  passwordHash: FAKE_HASH,
   isActive: true,
+  roleId: 'role-1',
+})
+
+const inactiveUser = new User({
+  id: 'u2',
+  email: 'hr@acme.com',
+  passwordHash: FAKE_HASH,
+  isActive: false,
   roleId: 'role-1',
 })
 
@@ -66,16 +77,23 @@ function makeTokenRepo(): IRefreshTokenRepository {
   }
 }
 
+function makePasswordSvc(validPassword = VALID_PASSWORD): IPasswordService {
+  return {
+    hash: mock((p: string) => Promise.resolve(`hashed:${p}`)),
+    verify: mock((password: string) => Promise.resolve(password === validPassword)),
+  }
+}
+
 describe('LoginUseCase', () => {
   let useCase: LoginUseCase
 
   beforeEach(() => {
-    useCase = new LoginUseCase(makeUserRepo(), makeRoleRepo(), makeTokenSvc(), makeTokenRepo())
+    useCase = new LoginUseCase(makeUserRepo(), makeRoleRepo(), makeTokenSvc(), makeTokenRepo(), makePasswordSvc())
   })
 
   // Test 2.1
   it('given_valid_credentials_when_execute_then_returns_tokens_and_user', async () => {
-    const result = await useCase.execute({ email: 'hr@acme.com', password: 'secret123' })
+    const result = await useCase.execute({ email: 'hr@acme.com', password: VALID_PASSWORD })
     expect(result.access_token).toBe('access.token.here')
     expect(result.refresh_token).toBe('raw-refresh-token')
     expect(result.user.id).toBe('user-1')
@@ -84,7 +102,7 @@ describe('LoginUseCase', () => {
 
   // Test 2.2 — frozen contract shape
   it('given_valid_login_when_execute_then_AuthenticatedUser_has_exact_contract_shape', async () => {
-    const result = await useCase.execute({ email: 'hr@acme.com', password: 'secret123' })
+    const result = await useCase.execute({ email: 'hr@acme.com', password: VALID_PASSWORD })
     expect(result.user).toHaveProperty('id')
     expect(result.user).toHaveProperty('email')
     expect(result.user).toHaveProperty('role')
@@ -111,23 +129,22 @@ describe('LoginUseCase', () => {
   // Test 2.4
   it('given_unknown_email_when_execute_then_throws_UnauthorizedError', async () => {
     const userRepo = makeUserRepo({ findByEmail: mock(() => Promise.resolve(null)) })
-    const uc = new LoginUseCase(userRepo, makeRoleRepo(), makeTokenSvc(), makeTokenRepo())
+    const uc = new LoginUseCase(userRepo, makeRoleRepo(), makeTokenSvc(), makeTokenRepo(), makePasswordSvc())
     await expect(uc.execute({ email: 'unknown@x.com', password: 'any' })).rejects.toThrow(UnauthorizedError)
   })
 
   // Test 2.5
   it('given_inactive_user_when_execute_then_throws_UnauthorizedError', async () => {
-    const inactiveUser = new User({ id: 'u2', email: 'hr@acme.com', passwordHash: await Bun.password.hash('secret123'), isActive: false, roleId: 'role-1' })
     const userRepo = makeUserRepo({ findByEmail: mock(() => Promise.resolve(inactiveUser)) })
-    const uc = new LoginUseCase(userRepo, makeRoleRepo(), makeTokenSvc(), makeTokenRepo())
-    await expect(uc.execute({ email: 'hr@acme.com', password: 'secret123' })).rejects.toThrow(UnauthorizedError)
+    const uc = new LoginUseCase(userRepo, makeRoleRepo(), makeTokenSvc(), makeTokenRepo(), makePasswordSvc())
+    await expect(uc.execute({ email: 'hr@acme.com', password: VALID_PASSWORD })).rejects.toThrow(UnauthorizedError)
   })
 
   // Test 2.6
   it('given_valid_login_when_execute_then_refresh_token_is_stored', async () => {
     const tokenRepo = makeTokenRepo()
-    const uc = new LoginUseCase(makeUserRepo(), makeRoleRepo(), makeTokenSvc(), tokenRepo)
-    await uc.execute({ email: 'hr@acme.com', password: 'secret123' })
+    const uc = new LoginUseCase(makeUserRepo(), makeRoleRepo(), makeTokenSvc(), tokenRepo, makePasswordSvc())
+    await uc.execute({ email: 'hr@acme.com', password: VALID_PASSWORD })
     expect(tokenRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user-1' })
     )

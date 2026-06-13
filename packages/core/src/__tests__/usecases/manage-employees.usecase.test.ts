@@ -2,7 +2,7 @@ import { describe, it, expect, mock, beforeEach } from 'bun:test'
 import { ManageEmployeesUseCase } from '../../usecases/manage-employees.usecase'
 import { ConflictError, NotFoundError, ValidationError } from '../../domain/errors'
 import type { IEmployeeRepository, IDepartmentRepository, EmployeeDetail } from '../../contracts/employees'
-import type { IUserRepository, IRefreshTokenRepository } from '../../contracts/auth'
+import type { IUserRepository, IRefreshTokenRepository, IPasswordService } from '../../contracts/auth'
 import type { IRoleRepository } from '../../contracts/roles'
 
 const now = new Date('2026-01-01T00:00:00Z')
@@ -77,14 +77,19 @@ function makeRepos() {
     revokeAllForUser: mock(async () => {}),
   }
 
-  return { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo }
+  const passwordSvc: IPasswordService = {
+    hash:   mock(async (p: string) => `hashed:${p}`),
+    verify: mock(async () => true),
+  }
+
+  return { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc }
 }
 
 describe('ManageEmployeesUseCase', () => {
   describe('createEmployee', () => {
     it('creates employee and returns detail with 5 onboarding steps', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       const result = await uc.createEmployee({
         fullName: 'Ana García', documentId: 'DNI-001', corporateEmail: 'ana@hrms.com',
@@ -96,8 +101,8 @@ describe('ManageEmployeesUseCase', () => {
     })
 
     it('also creates an associated user account', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await uc.createEmployee({
         fullName: 'Ana García', documentId: 'DNI-001', corporateEmail: 'ana@hrms.com',
@@ -108,9 +113,9 @@ describe('ManageEmployeesUseCase', () => {
     })
 
     it('throws NotFoundError when department does not exist', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
       ;(deptRepo.findById as ReturnType<typeof mock>).mockResolvedValue(null)
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await expect(
         uc.createEmployee({
@@ -121,9 +126,9 @@ describe('ManageEmployeesUseCase', () => {
     })
 
     it('throws ConflictError when corporate email already in use', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
       ;(employeeRepo.findByEmail as ReturnType<typeof mock>).mockResolvedValue(mockEmployeeDetail)
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await expect(
         uc.createEmployee({
@@ -134,9 +139,9 @@ describe('ManageEmployeesUseCase', () => {
     })
 
     it('throws ConflictError when document_id already in use', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
       ;(employeeRepo.findByDocumentId as ReturnType<typeof mock>).mockResolvedValue(mockEmployeeDetail)
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await expect(
         uc.createEmployee({
@@ -149,9 +154,9 @@ describe('ManageEmployeesUseCase', () => {
 
   describe('updateEmployee', () => {
     it('throws ValidationError when employee is INACTIVE', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
       ;(employeeRepo.findById as ReturnType<typeof mock>).mockResolvedValue({ ...mockEmployeeDetail, status: 'INACTIVE' })
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await expect(
         uc.updateEmployee('emp-1', { jobTitle: 'Senior Dev' })
@@ -161,8 +166,8 @@ describe('ManageEmployeesUseCase', () => {
 
   describe('terminateEmployee', () => {
     it('returns employee with INACTIVE status', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await uc.terminateEmployee('emp-1', new Date('2026-06-01'))
 
@@ -170,12 +175,12 @@ describe('ManageEmployeesUseCase', () => {
     })
 
     it('deactivates associated user account', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
       ;(userRepo.findByEmail as ReturnType<typeof mock>).mockResolvedValue({
         id: 'user-1', email: 'ana@hrms.com', passwordHash: 'x',
         isActive: true, roleId: 'role-1', employeeId: 'emp-1', lastLoginAt: null,
       })
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await uc.terminateEmployee('emp-1', new Date('2026-06-01'))
 
@@ -184,9 +189,9 @@ describe('ManageEmployeesUseCase', () => {
     })
 
     it('throws ValidationError when employee is already INACTIVE', async () => {
-      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo } = makeRepos()
+      const { employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc } = makeRepos()
       ;(employeeRepo.findById as ReturnType<typeof mock>).mockResolvedValue({ ...mockEmployeeDetail, status: 'INACTIVE' })
-      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+      const uc = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 
       await expect(
         uc.terminateEmployee('emp-1', new Date('2026-06-01'))

@@ -4,7 +4,7 @@ import type {
   EmployeeListQuery, EmployeeListResult, EmployeeDetail,
   EmployeeSummary, EmployeeOnboarding, OnboardingStepName,
 } from '../contracts/employees'
-import type { IUserRepository, IRefreshTokenRepository } from '../contracts/auth'
+import type { IUserRepository, IRefreshTokenRepository, IPasswordService } from '../contracts/auth'
 import type { IRoleRepository } from '../contracts/roles'
 import { Employee } from '../domain/employee'
 import { ConflictError, NotFoundError } from '../domain/errors'
@@ -16,6 +16,7 @@ export class ManageEmployeesUseCase {
     private readonly userRepo: IUserRepository,
     private readonly roleRepo: IRoleRepository,
     private readonly refreshTokenRepo: IRefreshTokenRepository,
+    private readonly passwordSvc: IPasswordService,
   ) {}
 
   async listEmployees(query: EmployeeListQuery): Promise<EmployeeListResult> {
@@ -45,7 +46,7 @@ export class ManageEmployeesUseCase {
     const created = await this.employeeRepo.create(input)
 
     // Create associated user account (corporate_email as login)
-    const tempPasswordHash = await Bun.password.hash(crypto.randomUUID())
+    const tempPasswordHash = await this.passwordSvc.hash(crypto.randomUUID())
     await this.userRepo.create({
       email: created.corporateEmail,
       passwordHash: tempPasswordHash,

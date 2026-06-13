@@ -8,6 +8,7 @@ import {
   ManageEmployeesUseCase, ManageDepartmentsUseCase,
 } from '@hrms/core'
 import { JwtTokenService } from './services/jwt-token.service'
+import { BunPasswordService } from './services/bun-password.service'
 
 const jwtSecret = process.env.JWT_SECRET
 if (!jwtSecret) throw new Error('JWT_SECRET environment variable is required')
@@ -20,15 +21,16 @@ const employeeRepo     = new EmployeeRepository(sql)
 const deptRepo         = new DepartmentRepository(sql)
 
 // Services
-const tokenSvc = new JwtTokenService(jwtSecret)
+const tokenSvc    = new JwtTokenService(jwtSecret)
+const passwordSvc = new BunPasswordService()
 
 // Use cases — auth
-export const loginUseCase        = new LoginUseCase(userRepo, roleRepo, tokenSvc, refreshTokenRepo)
+export const loginUseCase        = new LoginUseCase(userRepo, roleRepo, tokenSvc, refreshTokenRepo, passwordSvc)
 export const refreshTokenUseCase = new RefreshTokenUseCase(refreshTokenRepo, userRepo, tokenSvc, roleRepo)
 export const manageRolesUseCase  = new ManageRolesUseCase(roleRepo)
 
 // Use cases — employees
-export const manageEmployeesUseCase   = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo)
+export const manageEmployeesUseCase   = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
 export const manageDepartmentsUseCase = new ManageDepartmentsUseCase(deptRepo)
 
 // Expose repos needed by controllers

@@ -1,6 +1,8 @@
-import type { IUserRepository, ITokenService, IRefreshTokenRepository, AuthenticatedUser } from '../contracts/auth'
+import type { IUserRepository, ITokenService, IRefreshTokenRepository, IPasswordService, AuthenticatedUser } from '../contracts/auth'
 import type { IRoleRepository } from '../contracts/roles'
 import { UnauthorizedError } from '../domain/errors'
+
+const REFRESH_TOKEN_TTL_DAYS = 7
 
 interface LoginInput {
   email: string
@@ -19,6 +21,7 @@ export class LoginUseCase {
     private readonly roleRepo: IRoleRepository,
     private readonly tokenSvc: ITokenService,
     private readonly tokenRepo: IRefreshTokenRepository,
+    private readonly passwordSvc: IPasswordService,
   ) {}
 
   async execute(input: LoginInput): Promise<LoginResult> {
@@ -27,7 +30,7 @@ export class LoginUseCase {
 
     user.assertCanAuthenticate()
 
-    const passwordValid = await Bun.password.verify(input.password, user.passwordHash)
+    const passwordValid = await this.passwordSvc.verify(input.password, user.passwordHash)
     if (!passwordValid) throw new UnauthorizedError()
 
     const role = await this.roleRepo.findById(user.roleId)
@@ -48,7 +51,7 @@ export class LoginUseCase {
     const tokenHash = this.tokenSvc.hashToken(rawRefresh)
 
     const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 7)
+    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS)
 
     await Promise.all([
       this.tokenRepo.create({ userId: user.id, tokenHash, expiresAt }),
