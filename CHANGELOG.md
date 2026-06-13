@@ -146,14 +146,38 @@ _(último)_
 
 ## Deuda técnica identificada
 
+### Funcional
+
 | # | Descripción | Sub-spec | Impacto | Cuándo |
 |---|---|---|---|---|
 | 1 | Login sin recuperación de contraseña | hrms-auth-roles | medio | v2 |
-| 2 | Refresh token en localStorage (demo) — producción requiere httpOnly cookie | hrms-auth-roles | alto | antes de go-live |
-| 3 | Interceptor HTTP Angular para renovar access_token automáticamente no implementado | hrms-auth-roles | alto | antes de go-live |
-| 4 | Rate limiting en `/auth/login` no implementado | hrms-auth-roles | medio | antes de go-live |
-| 5 | Employee creation no atómica: si `userRepo.create` falla post-commit, queda empleado sin cuenta | hrms-employees | medio | cuando se implemente saga/compensating transaction |
-| 6 | Endpoint `GET /employees/export` (CSV) referenciado en UI pero no implementado | hrms-employees | bajo | hrms-admin |
-| 7 | Tests de integración de repositorios contra DB real pendientes | ambos | medio | antes de go-live |
-| 8 | Nómina sin cálculo fiscal/impuestos | hrms-payroll | medio | cuando se requiera compliance |
-| 9 | Reclutamiento solo interno (sin portal público) | hrms-recruitment | bajo | v2 |
+| 2 | Interceptor HTTP Angular para renovar access_token automáticamente no implementado | hrms-auth-roles | alto | antes de go-live |
+| 3 | Employee creation no atómica: si `userRepo.create` falla post-commit, queda empleado sin cuenta | hrms-employees | medio | cuando se implemente saga/compensating transaction |
+| 4 | Endpoint `GET /employees/export` (CSV) referenciado en UI pero no implementado | hrms-employees | bajo | hrms-admin |
+| 5 | Tests de integración de repositorios contra DB real pendientes | ambos | medio | antes de go-live |
+| 6 | Nómina sin cálculo fiscal/impuestos | hrms-payroll | medio | cuando se requiera compliance |
+| 7 | Reclutamiento solo interno (sin portal público) | hrms-recruitment | bajo | v2 |
+
+### Seguridad (ver detalle completo en `docs/security-debt.md`)
+
+Análisis `/sdd-security` 2026-06-13 — 0🔴 6🟠 9🟡 1🟢 hallazgos.
+
+| # | ID | Descripción | Prioridad | Cuándo |
+|---|---|---|---|---|
+| S1 | SEC-9 | Puerto PostgreSQL 5432 expuesto al host en docker-compose.yml | 🔴 | antes del primer deploy |
+| S2 | SEC-8 | Sin rate limiting en `/auth/login` — brute-force irrestricto | 🔴 | antes del primer deploy |
+| S3 | SEC-11 | Sin headers HTTP de seguridad (CSP, X-Frame-Options, HSTS) | 🔴 | antes del primer deploy |
+| S4 | SEC-13 | Sin error handler global — potencial exposición de stack traces | 🔴 | antes del primer deploy |
+| S5 | SEC-12 | JWT_SECRET sin validación de longitud mínima al startup | 🔴 | antes del primer deploy |
+| S6 | SEC-4 | `status: q.status as any` — parámetro no validado pasa al repositorio | 🔴 | antes del primer deploy |
+| S7 | SEC-10 | Sin cap en parámetro `limit` — potencial DoS por consultas masivas | 🔴 | antes del primer deploy |
+| S8 | SEC-2 | Timing attack en login — enumeración de usuarios por tiempo de respuesta | 🟠 | antes de go-live |
+| S9 | SEC-15 | Refresh token en localStorage — vulnerable a XSS (requiere httpOnly cookie) | 🟠 | antes de go-live |
+| S10 | SEC-3 | IDOR potencial en `GET /employees/:id` — sin filtro de ownership por rol | 🟠* | antes de go-live |
+| S11 | SEC-7 | 47 vulnerabilidades en npm Angular UI (29 high) — requiere audit + fix | 🟠 | antes de go-live |
+| S12 | SEC-5 | Sin HTTPS en docker-compose.yml — tráfico en texto plano | 🟠 | antes de go-live |
+| S13 | SEC-14 | Sin audit trail para login, cambios de rol y terminaciones | 🟡 | siguiente sprint |
+| S14 | SEC-16 | `super_admin` verificado por nombre de rol en cliente, no por permisos | 🟡 | siguiente sprint |
+| S15 | SEC-1 | Credenciales débiles de dev commiteadas — sin `.env` gitignored | 🟡 | siguiente sprint |
+
+*S10: verificar manualmente que el seed no da `canView: true` en EMPLOYEES al rol "Employee" — si lo hace, escala a 🔴.
