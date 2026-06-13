@@ -1,0 +1,21 @@
+{
+  "name": "hrms-hex",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "bun run --filter @hrms/api dev",
+    "dev:ui": "bun run --filter hrms-ui dev",
+    "test": "bun run --filter '@hrms/*' test",
+    "test:core": "bun run --filter @hrms/core test",
+    "test:boundary": "bun run --filter @hrms/boundary-postgres test",
+    "test:api": "bun run --filter @hrms/api test",
+    "migrate": "bun run --filter @hrms/boundary-postgres migrate"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

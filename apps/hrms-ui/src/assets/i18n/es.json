@@ -1,0 +1,174 @@
+{
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "welcome": "Bienvenido",
+      "subtitle": "Inicia sesión en tu cuenta",
+      "brand_subtitle": "Gestión de Recursos Humanos",
+      "email": "Correo electrónico",
+      "email_placeholder": "usuario@empresa.com",
+      "password": "Contraseña",
+      "show_password": "Mostrar contraseña",
+      "hide_password": "Ocultar contraseña",
+      "submit": "Entrar",
+      "feature": {
+        "secure": "Acceso seguro",
+        "team": "Gestión de equipos",
+        "reports": "Informes inteligentes"
+      },
+      "error": {
+        "invalid_credentials": "Correo o contraseña incorrectos"
+      }
+    }
+  },
+  "shell": {
+    "logout": "Cerrar sesión",
+    "brand_subtitle": "Super Admin",
+    "search_placeholder": "Buscar...",
+    "notifications": "Notificaciones",
+    "nav": {
+      "dashboard": "Panel",
+      "employees": "Empleados",
+      "attendance": "Asistencia",
+      "absences": "Ausencias",
+      "documents": "Documentos",
+      "payroll": "Nómina",
+      "benefits": "Beneficios",
+      "recruitment": "Reclutamiento",
+      "reports": "Informes",
+      "notifications": "Notificaciones",
+      "settings": "Configuración"
+    },
+    "nav_section": {
+      "configuration": "Configuración"
+    }
+  },
+  "roles": {
+    "title": "Gestión de Roles",
+    "subtitle": "Configura niveles de acceso y permisos por módulo para tu equipo.",
+    "create": "Crear Rol",
+    "empty": "No hay roles definidos",
+    "available": "Roles disponibles",
+    "permissions_subtitle": "Control de permisos granulares por módulo",
+    "system_note": "El rol Super Admin tiene acceso total por defecto. Las modificaciones a este rol pueden afectar la funcionalidad del sistema.",
+    "form": {
+      "name": "Nombre del rol",
+      "permissions": "Permisos por módulo"
+    },
+    "list": {
+      "name": "Nombre",
+      "type": "Tipo",
+      "actions": "Acciones",
+      "system": "Sistema",
+      "custom": "Personalizado"
+    },
+    "perms": {
+      "module": "Módulo"
+    },
+    "permissions": {
+      "canView": "Ver",
+      "canCreate": "Crear",
+      "canEdit": "Editar",
+      "canDelete": "Eliminar",
+      "canExport": "Exportar"
+    },
+    "desc": {
+      "super_admin": "Acceso total al sistema",
+      "hr_manager": "Gestión de empleados y RRHH",
+      "finance": "Nómina y seguimiento financiero",
+      "employee": "Acceso propio limitado"
+    }
+  },
+  "modules": {
+    "dashboard": "Panel",
+    "employees": "Empleados",
+    "attendance": "Asistencia",
+    "payroll": "Nómina",
+    "reports": "Informes",
+    "settings": "Configuración",
+    "documents": "Documentos",
+    "absences": "Ausencias",
+    "benefits": "Beneficios",
+    "recruitment": "Reclutamiento",
+    "notifications": "Notificaciones"
+  },
+  "employees": {
+    "title": "Empleados",
+    "subtitle": "Gestiona el expediente de empleados de tu organización.",
+    "new": "Nuevo empleado",
+    "export": "Exportar",
+    "search_placeholder": "Buscar por nombre, correo...",
+    "empty": "No hay empleados registrados",
+    "filters": {
+      "all_departments": "Todos los departamentos",
+      "all_statuses": "Todos los estados"
+    },
+    "status": {
+      "ACTIVE": "Activo",
+      "REMOTE": "Remoto",
+      "ON_LEAVE": "Con permiso",
+      "INACTIVE": "Inactivo"
+    },
+    "table": {
+      "name": "Nombre",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "status": "Estado",
+      "hire_date": "Fecha ingreso"
+    },
+    "fields": {
+      "full_name": "Nombre completo",
+      "document_id": "Documento",
+      "corporate_email": "Correo corporativo",
+      "corporate_email_placeholder": "nombre@empresa.com",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "salary": "Salario",
+      "hire_date": "Fecha de ingreso",
+      "termination_date": "Fecha de egreso",
+      "status": "Estado"
+    },
+    "detail": {
+      "tab_info": "Información",
+      "tab_onboarding": "Onboarding",
+      "personal_info": "Información personal",
+      "job_info": "Información laboral"
+    },
+    "onboarding": {
+      "documents": "Documentación",
+      "equipment": "Equipos",
+      "training": "Capacitación",
+      "access": "Accesos",
+      "complete": "Completado"
+    },
+    "actions": {
+      "terminate": "Dar de baja"
+    },
+    "terminate": {
+      "title": "Dar de baja al empleado",
+      "confirm_text": "¿Confirmas dar de baja a {{name}}? Esta acción no se puede deshacer."
+    },
+    "form": {
+      "title_create": "Nuevo empleado",
+      "title_edit": "Editar empleado",
+      "subtitle": "Completa la información del expediente.",
+      "create_btn": "Crear empleado",
+      "error_save": "No se pudo guardar. Intente nuevamente."
+    }
+  },
+  "common": {
+    "save": "Guardar cambios",
+    "discard": "Descartar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "loading": "Cargando...",
+    "validation": {
+      "required": "Este campo es requerido",
+      "email_format": "Ingrese un correo válido"
+    },
+    "error": {
+      "generic": "Ocurrió un error. Intente nuevamente."
+    }
+  }
+}

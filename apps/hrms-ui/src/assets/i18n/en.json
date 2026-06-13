@@ -1,0 +1,174 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "welcome": "Welcome back",
+      "subtitle": "Sign in to your account",
+      "brand_subtitle": "Human Resources Management",
+      "email": "Email address",
+      "email_placeholder": "user@company.com",
+      "password": "Password",
+      "show_password": "Show password",
+      "hide_password": "Hide password",
+      "submit": "Sign in",
+      "feature": {
+        "secure": "Secure access",
+        "team": "Team management",
+        "reports": "Smart reports"
+      },
+      "error": {
+        "invalid_credentials": "Invalid email or password"
+      }
+    }
+  },
+  "shell": {
+    "logout": "Sign out",
+    "brand_subtitle": "Super Admin",
+    "search_placeholder": "Search...",
+    "notifications": "Notifications",
+    "nav_section": {
+      "configuration": "Configuration"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "employees": "Employees",
+      "attendance": "Attendance",
+      "absences": "Absences",
+      "documents": "Documents",
+      "payroll": "Payroll",
+      "benefits": "Benefits",
+      "recruitment": "Recruitment",
+      "reports": "Reports",
+      "notifications": "Notifications",
+      "settings": "Settings"
+    }
+  },
+  "roles": {
+    "title": "Role Management",
+    "subtitle": "Configure access levels and permissions by module for your team.",
+    "create": "Create Role",
+    "empty": "No roles defined",
+    "available": "Available roles",
+    "permissions_subtitle": "Granular permission control per module",
+    "system_note": "The Super Admin role has full access by default. Changes to this role may affect system functionality.",
+    "form": {
+      "name": "Role name",
+      "permissions": "Permissions by module"
+    },
+    "list": {
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions",
+      "system": "System",
+      "custom": "Custom"
+    },
+    "perms": {
+      "module": "Module"
+    },
+    "permissions": {
+      "canView": "View",
+      "canCreate": "Create",
+      "canEdit": "Edit",
+      "canDelete": "Delete",
+      "canExport": "Export"
+    },
+    "desc": {
+      "super_admin": "Full system access",
+      "hr_manager": "Employee and HR management",
+      "finance": "Payroll and financial tracking",
+      "employee": "Limited self-access"
+    }
+  },
+  "modules": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "attendance": "Attendance",
+    "payroll": "Payroll",
+    "reports": "Reports",
+    "settings": "Settings",
+    "documents": "Documents",
+    "absences": "Absences",
+    "benefits": "Benefits",
+    "recruitment": "Recruitment",
+    "notifications": "Notifications"
+  },
+  "employees": {
+    "title": "Employees",
+    "subtitle": "Manage your organization's employee records.",
+    "new": "New employee",
+    "export": "Export",
+    "search_placeholder": "Search by name, email...",
+    "empty": "No employees registered",
+    "filters": {
+      "all_departments": "All departments",
+      "all_statuses": "All statuses"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "REMOTE": "Remote",
+      "ON_LEAVE": "On leave",
+      "INACTIVE": "Inactive"
+    },
+    "table": {
+      "name": "Name",
+      "department": "Department",
+      "job_title": "Job title",
+      "status": "Status",
+      "hire_date": "Hire date"
+    },
+    "fields": {
+      "full_name": "Full name",
+      "document_id": "Document ID",
+      "corporate_email": "Corporate email",
+      "corporate_email_placeholder": "name@company.com",
+      "department": "Department",
+      "job_title": "Job title",
+      "salary": "Salary",
+      "hire_date": "Hire date",
+      "termination_date": "Termination date",
+      "status": "Status"
+    },
+    "detail": {
+      "tab_info": "Information",
+      "tab_onboarding": "Onboarding",
+      "personal_info": "Personal information",
+      "job_info": "Job information"
+    },
+    "onboarding": {
+      "documents": "Documentation",
+      "equipment": "Equipment",
+      "training": "Training",
+      "access": "Access",
+      "complete": "Complete"
+    },
+    "actions": {
+      "terminate": "Terminate"
+    },
+    "terminate": {
+      "title": "Terminate employee",
+      "confirm_text": "Confirm termination of {{name}}? This action cannot be undone."
+    },
+    "form": {
+      "title_create": "New employee",
+      "title_edit": "Edit employee",
+      "subtitle": "Fill in the employee record information.",
+      "create_btn": "Create employee",
+      "error_save": "Could not save. Please try again."
+    }
+  },
+  "common": {
+    "save": "Save changes",
+    "discard": "Discard",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "validation": {
+      "required": "This field is required",
+      "email_format": "Please enter a valid email"
+    },
+    "error": {
+      "generic": "An error occurred. Please try again."
+    }
+  }
+}

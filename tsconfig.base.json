@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "lib": ["ES2022"],
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "paths": {
+      "@hrms/core": ["./packages/core/src/index.ts"],
+      "@hrms/core/*": ["./packages/core/src/*"],
+      "@hrms/boundary-postgres": ["./packages/boundary-postgres/src/index.ts"],
+      "@hrms/boundary-postgres/*": ["./packages/boundary-postgres/src/*"]
+    }
+  }
+}

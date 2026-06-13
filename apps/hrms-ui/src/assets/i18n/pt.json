@@ -1,0 +1,174 @@
+{
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "welcome": "Bem-vindo",
+      "subtitle": "Entre na sua conta",
+      "brand_subtitle": "Gestão de Recursos Humanos",
+      "email": "E-mail",
+      "email_placeholder": "usuario@empresa.com",
+      "password": "Senha",
+      "show_password": "Mostrar senha",
+      "hide_password": "Ocultar senha",
+      "submit": "Entrar",
+      "feature": {
+        "secure": "Acesso seguro",
+        "team": "Gestão de equipes",
+        "reports": "Relatórios inteligentes"
+      },
+      "error": {
+        "invalid_credentials": "E-mail ou senha inválidos"
+      }
+    }
+  },
+  "shell": {
+    "logout": "Sair",
+    "brand_subtitle": "Super Admin",
+    "search_placeholder": "Buscar...",
+    "notifications": "Notificações",
+    "nav_section": {
+      "configuration": "Configuração"
+    },
+    "nav": {
+      "dashboard": "Painel",
+      "employees": "Funcionários",
+      "attendance": "Presença",
+      "absences": "Ausências",
+      "documents": "Documentos",
+      "payroll": "Folha de pagamento",
+      "benefits": "Benefícios",
+      "recruitment": "Recrutamento",
+      "reports": "Relatórios",
+      "notifications": "Notificações",
+      "settings": "Configurações"
+    }
+  },
+  "roles": {
+    "title": "Gestão de Perfis",
+    "subtitle": "Configure níveis de acesso e permissões por módulo para sua equipe.",
+    "create": "Criar Perfil",
+    "empty": "Nenhum perfil definido",
+    "available": "Perfis disponíveis",
+    "permissions_subtitle": "Controle granular de permissões por módulo",
+    "system_note": "O perfil Super Admin tem acesso total por padrão. Modificações neste perfil podem afetar a funcionalidade do sistema.",
+    "form": {
+      "name": "Nome do perfil",
+      "permissions": "Permissões por módulo"
+    },
+    "list": {
+      "name": "Nome",
+      "type": "Tipo",
+      "actions": "Ações",
+      "system": "Sistema",
+      "custom": "Personalizado"
+    },
+    "perms": {
+      "module": "Módulo"
+    },
+    "permissions": {
+      "canView": "Visualizar",
+      "canCreate": "Criar",
+      "canEdit": "Editar",
+      "canDelete": "Excluir",
+      "canExport": "Exportar"
+    },
+    "desc": {
+      "super_admin": "Acesso total ao sistema",
+      "hr_manager": "Gestão de funcionários e RH",
+      "finance": "Folha e acompanhamento financeiro",
+      "employee": "Acesso próprio limitado"
+    }
+  },
+  "modules": {
+    "dashboard": "Painel",
+    "employees": "Funcionários",
+    "attendance": "Presença",
+    "payroll": "Folha de pagamento",
+    "reports": "Relatórios",
+    "settings": "Configurações",
+    "documents": "Documentos",
+    "absences": "Ausências",
+    "benefits": "Benefícios",
+    "recruitment": "Recrutamento",
+    "notifications": "Notificações"
+  },
+  "employees": {
+    "title": "Funcionários",
+    "subtitle": "Gerencie os registros de funcionários da sua organização.",
+    "new": "Novo funcionário",
+    "export": "Exportar",
+    "search_placeholder": "Buscar por nome, e-mail...",
+    "empty": "Nenhum funcionário cadastrado",
+    "filters": {
+      "all_departments": "Todos os departamentos",
+      "all_statuses": "Todos os estados"
+    },
+    "status": {
+      "ACTIVE": "Ativo",
+      "REMOTE": "Remoto",
+      "ON_LEAVE": "De licença",
+      "INACTIVE": "Inativo"
+    },
+    "table": {
+      "name": "Nome",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "status": "Status",
+      "hire_date": "Data de admissão"
+    },
+    "fields": {
+      "full_name": "Nome completo",
+      "document_id": "Documento",
+      "corporate_email": "E-mail corporativo",
+      "corporate_email_placeholder": "nome@empresa.com",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "salary": "Salário",
+      "hire_date": "Data de admissão",
+      "termination_date": "Data de desligamento",
+      "status": "Status"
+    },
+    "detail": {
+      "tab_info": "Informações",
+      "tab_onboarding": "Integração",
+      "personal_info": "Informações pessoais",
+      "job_info": "Informações profissionais"
+    },
+    "onboarding": {
+      "documents": "Documentação",
+      "equipment": "Equipamentos",
+      "training": "Treinamento",
+      "access": "Acessos",
+      "complete": "Concluído"
+    },
+    "actions": {
+      "terminate": "Desligar"
+    },
+    "terminate": {
+      "title": "Desligar funcionário",
+      "confirm_text": "Confirma o desligamento de {{name}}? Esta ação não pode ser desfeita."
+    },
+    "form": {
+      "title_create": "Novo funcionário",
+      "title_edit": "Editar funcionário",
+      "subtitle": "Preencha as informações do cadastro.",
+      "create_btn": "Criar funcionário",
+      "error_save": "Não foi possível salvar. Tente novamente."
+    }
+  },
+  "common": {
+    "save": "Salvar alterações",
+    "discard": "Descartar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "loading": "Carregando...",
+    "validation": {
+      "required": "Este campo é obrigatório",
+      "email_format": "Informe um e-mail válido"
+    },
+    "error": {
+      "generic": "Ocorreu um erro. Tente novamente."
+    }
+  }
+}

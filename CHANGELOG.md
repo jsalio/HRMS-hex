@@ -10,20 +10,47 @@ Registro de avance del pipeline SDD. Cada sub-spec pasa por las fases: Spec → 
 
 | Sub-spec | Spec | Impact | Arch | TDD Plan | Implement | Consolidado |
 |---|---|---|---|---|---|---|
-| 1. hrms-auth-roles | ✅ | ✅ | ✅ | ✅ | 🔄 | ⏳ |
-| 2. hrms-employees | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 3. hrms-documents | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 4. hrms-absences | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 5. hrms-attendance | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 6. hrms-payroll | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 7. hrms-benefits | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 8. hrms-recruitment | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 1. hrms-auth-roles    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 2. hrms-employees     | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 3. hrms-documents     | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 4. hrms-absences      | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 5. hrms-attendance    | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 6. hrms-payroll       | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 7. hrms-benefits      | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 8. hrms-recruitment   | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 | 9. hrms-notifications | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
-| 10. hrms-admin | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
+| 10. hrms-admin        | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ |
 
 ---
 
 ## Historial detallado
+
+### 2026-06-13
+
+#### ✅ Sub-spec 2 — hrms-employees — Completo
+
+**Commit**: `de467dd feat(hrms-employees): implement employee management — CRUD, departments, onboarding, Angular UI`
+
+- **Core**: `Employee` domain entity (invariantes `assertCanBeModified` / `assertCanBeTerminated`)
+- **Core**: `ManageEmployeesUseCase` (create + update + terminate + onboarding) y `ManageDepartmentsUseCase`
+- **Core**: `ValidationError` — nuevo tipo de error de dominio (422 vs 409)
+- **DB**: Migración `002_employees.sql` — `departments`, `employees`, `employee_onboarding` + 5 depts seed
+- **API**: 9 endpoints nuevos (`/employees` × 7, `/departments` × 2) con validación Zod
+- **UI**: `EmployeesListPageComponent` — tabla paginada, filtros, búsqueda debounced
+- **UI**: `EmployeeDetailPageComponent` — tabs Info + Onboarding, modal de baja
+- **UI**: `EmployeeFormPageComponent` — formulario reactivo create/edit
+- **i18n**: Claves `employees.*` en es/en/pt
+- **Docs**: Consolidados `hrms-auth-roles.md` y `hrms-employees.md`; 7 archivos intermedios eliminados
+- **Tests**: +17 nuevos (8 dominio + 9 usecases) → total **47 tests, 47 passing**
+
+**Fix en la misma sesión** — `d56b2a2 fix(core): extract IPasswordService to restore DIP in Core usecases`
+
+- DIP roto: `Bun.password.hash/verify` llamado desde Core → extraído como `IPasswordService`
+- `BunPasswordService` implementado en `packages/api/src/services/`
+- Magic number `7` → constante `REFRESH_TOKEN_TTL_DAYS`
+- Tests de `LoginUseCase` eliminaron dependencia en `Bun` — ahora mockean `IPasswordService`
+
+---
 
 ### 2026-06-12
 
@@ -64,26 +91,22 @@ Registro de avance del pipeline SDD. Cada sub-spec pasa por las fases: Spec → 
 
 > Marcar como ✅ cuando el usuario confirme cada entrega.
 
-### Sub-spec 1: hrms-auth-roles
+### Sub-spec 1: hrms-auth-roles ✅
 
-- [ ] `/impact` — análisis de side-effects → `hrms-auth-roles.impact.md`
-- [ ] `/arch` — arquitectura hexagonal → `hrms-auth-roles.arch.md`
-- [x] `/tdd-plan` — tests backend → `hrms-auth-roles.tdd-plan.md` ✅ 40 tests (8 domain, 14 usecases, 9 infra, 9 API)
-- [x] `/tdd-plan-ui` — tests Angular → `hrms-auth-roles.tdd-plan-ui.md` ✅ 38 tests (10 service, 6 guards, 8 login, 6 shell, 5 roles, 3 form)
-- [ ] `/implement` — código en rama `feat/hrms-auth-roles`
-- [ ] Consolidación → `hrms-auth-roles.md` (doc final)
-- [ ] Merge a `main` ✓ confirmado por usuario
+- [x] `/impact` → `hrms-auth-roles.impact.md` ✅
+- [x] `/arch` → `hrms-auth-roles.arch.md` ✅
+- [x] `/tdd-plan` → `hrms-auth-roles.tdd-plan.md` ✅ 40 tests (8 domain, 14 usecases, 9 infra, 9 API)
+- [x] `/tdd-plan-ui` → `hrms-auth-roles.tdd-plan-ui.md` ✅ 38 tests
+- [x] `/implement` — 30 tests GREEN, Angular UI completo ✅
+- [x] Consolidación → `docs/specs/hrms-auth-roles.md` ✅
+- [ ] Merge a `main`
 
-### Sub-spec 2: hrms-employees
-_(arranca después de merge de auth-roles)_
+### Sub-spec 2: hrms-employees ✅
 
-- [ ] `/impact` → `hrms-employees.impact.md`
-- [ ] `/arch` → `hrms-employees.arch.md`
-- [ ] `/tdd-plan` → `hrms-employees.tdd-plan.md`
-- [ ] `/tdd-plan-ui` → `hrms-employees.tdd-plan-ui.md`
-- [ ] `/implement` — rama `feat/hrms-employees`
-- [ ] Consolidación → `hrms-employees.md`
-- [ ] Merge a `main` ✓
+- [x] Implementación completa (pipeline condensado con implement) ✅
+- [x] Consolidación → `docs/specs/hrms-employees.md` ✅
+- [x] 47 tests passing ✅
+- [ ] Merge a `main`
 
 ### Sub-specs 3-5, 7-8 (paralelos después de employees)
 _(cada uno en su propia rama)_
@@ -123,9 +146,38 @@ _(último)_
 
 ## Deuda técnica identificada
 
+### Funcional
+
 | # | Descripción | Sub-spec | Impacto | Cuándo |
 |---|---|---|---|---|
 | 1 | Login sin recuperación de contraseña | hrms-auth-roles | medio | v2 |
-| 2 | Nómina sin cálculo fiscal/impuestos | hrms-payroll | medio | cuando se requiera compliance |
-| 3 | Reclutamiento solo interno (sin portal público) | hrms-recruitment | bajo | v2 |
-| 4 | 2FA implementado como TOTP pero UI no especificada aún | hrms-auth-roles | medio | antes de go-live |
+| 2 | Interceptor HTTP Angular para renovar access_token automáticamente no implementado | hrms-auth-roles | alto | antes de go-live |
+| 3 | Employee creation no atómica: si `userRepo.create` falla post-commit, queda empleado sin cuenta | hrms-employees | medio | cuando se implemente saga/compensating transaction |
+| 4 | Endpoint `GET /employees/export` (CSV) referenciado en UI pero no implementado | hrms-employees | bajo | hrms-admin |
+| 5 | Tests de integración de repositorios contra DB real pendientes | ambos | medio | antes de go-live |
+| 6 | Nómina sin cálculo fiscal/impuestos | hrms-payroll | medio | cuando se requiera compliance |
+| 7 | Reclutamiento solo interno (sin portal público) | hrms-recruitment | bajo | v2 |
+
+### Seguridad (ver detalle completo en `docs/security-debt.md`)
+
+Análisis `/sdd-security` 2026-06-13 — 0🔴 6🟠 9🟡 1🟢 hallazgos.
+
+| # | ID | Descripción | Prioridad | Cuándo |
+|---|---|---|---|---|
+| S1 | SEC-9 | Puerto PostgreSQL 5432 expuesto al host en docker-compose.yml | 🔴 | antes del primer deploy |
+| S2 | SEC-8 | Sin rate limiting en `/auth/login` — brute-force irrestricto | 🔴 | antes del primer deploy |
+| S3 | SEC-11 | Sin headers HTTP de seguridad (CSP, X-Frame-Options, HSTS) | 🔴 | antes del primer deploy |
+| S4 | SEC-13 | Sin error handler global — potencial exposición de stack traces | 🔴 | antes del primer deploy |
+| S5 | SEC-12 | JWT_SECRET sin validación de longitud mínima al startup | 🔴 | antes del primer deploy |
+| S6 | SEC-4 | `status: q.status as any` — parámetro no validado pasa al repositorio | 🔴 | antes del primer deploy |
+| S7 | SEC-10 | Sin cap en parámetro `limit` — potencial DoS por consultas masivas | 🔴 | antes del primer deploy |
+| S8 | SEC-2 | Timing attack en login — enumeración de usuarios por tiempo de respuesta | 🟠 | antes de go-live |
+| S9 | SEC-15 | Refresh token en localStorage — vulnerable a XSS (requiere httpOnly cookie) | 🟠 | antes de go-live |
+| S10 | SEC-3 | IDOR potencial en `GET /employees/:id` — sin filtro de ownership por rol | 🟠* | antes de go-live |
+| S11 | SEC-7 | 47 vulnerabilidades en npm Angular UI (29 high) — requiere audit + fix | 🟠 | antes de go-live |
+| S12 | SEC-5 | Sin HTTPS en docker-compose.yml — tráfico en texto plano | 🟠 | antes de go-live |
+| S13 | SEC-14 | Sin audit trail para login, cambios de rol y terminaciones | 🟡 | siguiente sprint |
+| S14 | SEC-16 | `super_admin` verificado por nombre de rol en cliente, no por permisos | 🟡 | siguiente sprint |
+| S15 | SEC-1 | Credenciales débiles de dev commiteadas — sin `.env` gitignored | 🟡 | siguiente sprint |
+
+*S10: verificar manualmente que el seed no da `canView: true` en EMPLOYEES al rol "Employee" — si lo hace, escala a 🔴.

@@ -1,0 +1,23 @@
+FROM oven/bun:1-alpine
+
+WORKDIR /app
+
+# Copy workspace manifest and lockfile
+COPY package.json bun.lock* tsconfig.base.json ./
+
+# Copy all workspace packages
+COPY packages/ ./packages/
+
+# Stub apps/hrms-ui so Bun workspace resolution doesn't fail
+RUN mkdir -p apps/hrms-ui
+COPY apps/hrms-ui/package.json ./apps/hrms-ui/
+
+# Install all dependencies (resolves workspace symlinks)
+RUN bun install --frozen-lockfile
+
+COPY docker/entrypoint.api.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 3000
+
+ENTRYPOINT ["/entrypoint.sh"]
