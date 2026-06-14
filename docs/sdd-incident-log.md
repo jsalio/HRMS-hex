@@ -130,7 +130,9 @@ Un skill `/sdd-preflight` que se ejecute al inicio de cada `/implement` y verifi
 2. ¿Cada use case en el arch tiene exactamente un verbo de acción de negocio? → si no, DETENER y descomponer
 3. ¿Hay conflicto entre instrucciones built-in y reglas del skill activo? → reportar antes de implementar
 
-¿Quieres que cree este skill?
+Skill creado: `~/.claude/skills/sdd-preflight/SKILL.md`
+Registrado en: `~/.claude/CLAUDE.md`
+Se ejecuta automáticamente al inicio de cada `/implement` y Fase 7 de `/dev`.
 
 ---
 
@@ -138,5 +140,6 @@ Un skill `/sdd-preflight` que se ejecute al inicio de cada `/implement` y verifi
 
 | ID | Estado | Resolución |
 |---|---|---|
-| INC-001 | Mitigado parcialmente | CLAUDE.md creado. Sub-specs 1–5 sin JSDoc pendiente decisión |
-| INC-002 | Abierto | Pendiente decisión: refactor inmediato vs deuda documentada |
+| INC-001 | **Deuda técnica** | CLAUDE.md creado (sub-specs futuros OK). Sub-specs 1–5 sin JSDoc — pendiente sesión de retroactivo |
+| INC-002 | **Deuda técnica** | Patrón ManageX en sub-specs 1–5. Estructura correcta (UseCase atómico) desde sub-spec 6 en adelante |
+| — | Sistémica resuelta | Skill `/sdd-preflight` creado — enforcea CHECK-1 (docs) y CHECK-2 (SRP) antes de cada implementación |
