@@ -233,5 +233,60 @@
       "create": "Error uploading document",
       "renew": "Error renewing document"
     }
+  },
+  "absences": {
+    "my_absences": "My absences",
+    "approvals_queue": "Approvals queue",
+    "request_absence": "Request absence",
+    "submit_request": "Submit request",
+    "cancel": "Cancel request",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reject_title": "Reject request",
+    "my_requests": "My requests",
+    "no_requests": "You have no absence requests",
+    "no_pending": "No pending approval requests",
+    "days_available": "days available",
+    "allocated": "allocated",
+    "used": "used",
+    "pending": "pending",
+    "types": {
+      "vacation": "Vacation",
+      "sick_leave": "Sick leave",
+      "personal": "Personal days",
+      "maternity": "Maternity",
+      "paternity": "Paternity"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled"
+    },
+    "table": {
+      "employee": "Employee",
+      "type": "Type",
+      "dates": "Dates",
+      "days": "Days",
+      "status": "Status",
+      "reason": "Reason",
+      "actions": "Actions"
+    },
+    "fields": {
+      "type": "Absence type",
+      "select_type": "Select a type",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "reason": "Reason",
+      "notes": "Review notes",
+      "notes_placeholder": "State the reason for rejection..."
+    },
+    "error": {
+      "load": "Error loading absences",
+      "create": "Error creating request",
+      "cancel": "Error cancelling request",
+      "approve": "Error approving request",
+      "reject": "Error rejecting request"
+    }
   }
 }

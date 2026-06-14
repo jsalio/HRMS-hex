@@ -233,5 +233,60 @@
       "create": "Error al subir el documento",
       "renew": "Error al renovar el documento"
     }
+  },
+  "absences": {
+    "my_absences": "Mis ausencias",
+    "approvals_queue": "Cola de aprobaciones",
+    "request_absence": "Solicitar ausencia",
+    "submit_request": "Enviar solicitud",
+    "cancel": "Cancelar solicitud",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "reject_title": "Rechazar solicitud",
+    "my_requests": "Mis solicitudes",
+    "no_requests": "No tienes solicitudes de ausencia",
+    "no_pending": "No hay solicitudes pendientes de aprobación",
+    "days_available": "días disponibles",
+    "allocated": "asignados",
+    "used": "usados",
+    "pending": "pendientes",
+    "types": {
+      "vacation": "Vacaciones",
+      "sick_leave": "Baja médica",
+      "personal": "Días personales",
+      "maternity": "Maternidad",
+      "paternity": "Paternidad"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "APPROVED": "Aprobada",
+      "REJECTED": "Rechazada",
+      "CANCELLED": "Cancelada"
+    },
+    "table": {
+      "employee": "Empleado",
+      "type": "Tipo",
+      "dates": "Fechas",
+      "days": "Días",
+      "status": "Estado",
+      "reason": "Motivo",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "type": "Tipo de ausencia",
+      "select_type": "Selecciona un tipo",
+      "start_date": "Fecha inicio",
+      "end_date": "Fecha fin",
+      "reason": "Motivo",
+      "notes": "Notas de revisión",
+      "notes_placeholder": "Indique el motivo del rechazo..."
+    },
+    "error": {
+      "load": "Error al cargar ausencias",
+      "create": "Error al crear la solicitud",
+      "cancel": "Error al cancelar la solicitud",
+      "approve": "Error al aprobar la solicitud",
+      "reject": "Error al rechazar la solicitud"
+    }
   }
 }
