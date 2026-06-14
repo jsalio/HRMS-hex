@@ -42,6 +42,16 @@ Fuente completa: `docs/specs/hrms-employees.security.md`
 
 ---
 
+## Sub-spec 4 — hrms-absences (2026-06-13)
+
+| # | ID | Severidad | Descripción | Archivo(s) | Prioridad | Esfuerzo |
+|---|---|---|---|---|---|---|
+| 19 | SEC-A1 | 🟡 | `isManager()` verifica `role.name === 'hr_manager'` — string hardcodeado; si el nombre del rol cambia en DB los managers pierden acceso sin error visible | `packages/api/src/controllers/absences.controller.ts:isManager` | 🟡 | S |
+| 20 | SEC-A2 | 🟡 | `PATCH /absence-requests/:id/cancel` usa `requirePermission(ABSENCES, 'canView')` pero la operación modifica estado — debería requerir `canCreate` o un permiso de cancelación explícito | `packages/api/src/controllers/absences.controller.ts:cancel` | 🟡 | XS |
+| 21 | SEC-A3 | 🟡 | `approvals-page.component.ts` muestra `employeeId` (UUID) en lugar del nombre del empleado — filterable por UUID revela IDs internos en la UI | `apps/hrms-ui/src/app/absences/approvals-page.component.ts` | 🟡 | M |
+
+---
+
 ## Grupos de trabajo
 
 ### Grupo A — Quick wins (XS, antes del primer deploy)

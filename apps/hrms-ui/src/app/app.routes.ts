@@ -31,6 +31,16 @@ export const routes: Routes = [
         canActivate: [permissionGuard(AppModule.EMPLOYEES, 'canView')],
         loadChildren: () => import('./employees/employees.routes').then(m => m.EMPLOYEES_ROUTES),
       },
+      {
+        path: 'absences',
+        canActivate: [permissionGuard(AppModule.ABSENCES, 'canView')],
+        loadComponent: () => import('./absences/my-absences-page.component').then(m => m.MyAbsencesPageComponent),
+      },
+      {
+        path: 'absences/approvals',
+        canActivate: [permissionGuard(AppModule.ABSENCES, 'canEdit')],
+        loadComponent: () => import('./absences/approvals-page.component').then(m => m.ApprovalsPageComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

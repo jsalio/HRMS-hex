@@ -3,6 +3,11 @@ export { AppModule } from './roles'
 export type { RolePermission, IRoleRepository, CreateRoleData, UpdateRoleData } from './roles'
 export { ONBOARDING_STEPS } from './employees'
 export type {
+  AbsenceStatus,
+  AbsenceTypeData, AbsenceBalanceData, AbsenceRequestData,
+  IAbsenceRepository, AbsenceRequestQuery, CreateAbsenceRequestInput,
+} from './absences'
+export type {
   DocumentStatus, DocumentType,
   EmployeeDocumentData, ExpiringDocumentData,
   IDocumentRepository,
