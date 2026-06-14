@@ -288,5 +288,43 @@
       "approve": "Erro ao aprovar solicitação",
       "reject": "Erro ao rejeitar solicitação"
     }
+  },
+  "attendance": {
+    "title": "Presença",
+    "check_in": "Entrada",
+    "check_out": "Saída",
+    "no_records": "Nenhum registro de presença encontrado",
+    "edit_record": "Editar registro",
+    "filter": {
+      "all_statuses": "Todos os status"
+    },
+    "summary": {
+      "present": "Presentes",
+      "absent": "Ausentes",
+      "late": "Atrasos",
+      "total_hours": "Total de horas"
+    },
+    "status": {
+      "PRESENT": "Presente",
+      "ABSENT": "Ausente",
+      "LATE": "Atrasado",
+      "ON_LEAVE": "De licença",
+      "HOLIDAY": "Feriado"
+    },
+    "table": {
+      "date": "Data",
+      "check_in": "Entrada",
+      "check_out": "Saída",
+      "hours": "Horas",
+      "status": "Status",
+      "notes": "Observações",
+      "actions": "Ações"
+    },
+    "error": {
+      "load_failed": "Erro ao carregar registros",
+      "check_in_failed": "Erro ao registrar entrada",
+      "check_out_failed": "Erro ao registrar saída",
+      "edit_failed": "Erro ao editar registro"
+    }
   }
 }

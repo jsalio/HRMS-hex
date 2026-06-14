@@ -288,5 +288,43 @@
       "approve": "Error approving request",
       "reject": "Error rejecting request"
     }
+  },
+  "attendance": {
+    "title": "Attendance",
+    "check_in": "Check In",
+    "check_out": "Check Out",
+    "no_records": "No attendance records found",
+    "edit_record": "Edit Record",
+    "filter": {
+      "all_statuses": "All statuses"
+    },
+    "summary": {
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "total_hours": "Total hours"
+    },
+    "status": {
+      "PRESENT": "Present",
+      "ABSENT": "Absent",
+      "LATE": "Late",
+      "ON_LEAVE": "On leave",
+      "HOLIDAY": "Holiday"
+    },
+    "table": {
+      "date": "Date",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "hours": "Hours",
+      "status": "Status",
+      "notes": "Notes",
+      "actions": "Actions"
+    },
+    "error": {
+      "load_failed": "Error loading records",
+      "check_in_failed": "Error recording check-in",
+      "check_out_failed": "Error recording check-out",
+      "edit_failed": "Error editing record"
+    }
   }
 }

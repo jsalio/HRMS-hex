@@ -52,6 +52,16 @@ Fuente completa: `docs/specs/hrms-employees.security.md`
 
 ---
 
+## Sub-spec 5 — hrms-attendance (2026-06-14)
+
+| # | ID | Severidad | Descripción | Archivo(s) | Prioridad | Esfuerzo |
+|---|---|---|---|---|---|---|
+| 22 | SEC-AT1 | 🟡 | `PATCH /attendance/:id` no verifica ownership — cualquier usuario con `canEdit` puede editar el registro de cualquier empleado sin restricción de scope | `packages/api/src/controllers/attendance.controller.ts:patch` | 🟡 | S |
+| 23 | SEC-AT2 | 🟡 | `GET /attendance` sin `employee_id` devuelve todos los registros — un empleado con `canView` puede ver la asistencia de toda la empresa | `packages/api/src/controllers/attendance.controller.ts:GET /` | 🟡 | S |
+| 24 | SEC-AT3 | 🟡 | `POST /check-in` y `POST /check-out` no verifican que el `employee_id` del body corresponda al usuario autenticado — un usuario puede fichar en nombre de otro | `packages/api/src/controllers/attendance.controller.ts:check-in,check-out` | 🟡 | S |
+
+---
+
 ## Grupos de trabajo
 
 ### Grupo A — Quick wins (XS, antes del primer deploy)

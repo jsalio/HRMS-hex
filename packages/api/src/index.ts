@@ -3,7 +3,7 @@ import { logger } from 'hono/logger'
 import {
   loginUseCase, refreshTokenUseCase, manageRolesUseCase,
   manageEmployeesUseCase, manageDepartmentsUseCase, manageDocumentsUseCase,
-  manageAbsencesUseCase,
+  manageAbsencesUseCase, manageAttendanceUseCase,
   refreshTokenRepo, tokenSvc,
 } from './container'
 import { createAuthController } from './controllers/auth.controller'
@@ -12,6 +12,7 @@ import { createEmployeesController } from './controllers/employees.controller'
 import { createDepartmentsController } from './controllers/departments.controller'
 import { createDocumentsController } from './controllers/documents.controller'
 import { createAbsencesController } from './controllers/absences.controller'
+import { createAttendanceController } from './controllers/attendance.controller'
 
 const app = new Hono()
 
@@ -28,6 +29,8 @@ app.route('/documents', docsCtrl.documentRoutes)
 
 const absencesCtrl = createAbsencesController(manageAbsencesUseCase)
 app.route('/', absencesCtrl)
+
+app.route('/attendance', createAttendanceController(manageAttendanceUseCase))
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 
