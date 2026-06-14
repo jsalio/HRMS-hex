@@ -7,7 +7,7 @@ import { EmployeesService, type EmployeeDetail, type OnboardingDTO } from './emp
 import { AuthService } from '../core/services/auth.service'
 import { AppModule } from '../core/models/auth.models'
 
-type Tab = 'info' | 'onboarding'
+type Tab = 'info' | 'onboarding' | 'documents'
 
 @Component({
   selector: 'app-employee-detail-page',
@@ -69,6 +69,11 @@ type Tab = 'info' | 'onboarding'
             <span class="material-symbols-outlined">checklist</span>
             {{ 'employees.detail.tab_onboarding' | translate }}
           </button>
+          <a class="tab" [class.active]="activeTab() === 'documents'"
+             [routerLink]="['/employees', employee()!.id, 'documents']">
+            <span class="material-symbols-outlined">description</span>
+            {{ 'documents.title' | translate }}
+          </a>
         </div>
 
         <!-- Info tab -->
@@ -233,7 +238,7 @@ type Tab = 'info' | 'onboarding'
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .tabs { display: flex; gap: 4px; border-bottom: 1px solid #e8eaed; margin-bottom: 24px; }
-    .tab { display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; background: none; border: none; border-bottom: 2px solid transparent; color: #5f6368; font-size: 13.5px; font-weight: 500; cursor: pointer; font-family: inherit; margin-bottom: -1px; transition: color 100ms; }
+    .tab { display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; background: none; border: none; border-bottom: 2px solid transparent; color: #5f6368; font-size: 13.5px; font-weight: 500; cursor: pointer; font-family: inherit; margin-bottom: -1px; transition: color 100ms; text-decoration: none; }
     .tab:hover { color: #202124; }
     .tab.active { color: #1a73e8; border-bottom-color: #1a73e8; }
     .tab .material-symbols-outlined { font-size: 18px; }
