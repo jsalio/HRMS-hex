@@ -1,7 +1,13 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { ManageDocumentsUseCase } from '@hrms/core/usecases/manage-documents.usecase'
+import type { ListDocumentsUseCase } from '@hrms/core/usecases/list-documents.usecase'
+import type { GetDocumentUseCase } from '@hrms/core/usecases/get-document.usecase'
+import type { CreateDocumentUseCase } from '@hrms/core/usecases/create-document.usecase'
+import type { SignDocumentUseCase } from '@hrms/core/usecases/sign-document.usecase'
+import type { ArchiveDocumentUseCase } from '@hrms/core/usecases/archive-document.usecase'
+import type { RenewDocumentUseCase } from '@hrms/core/usecases/renew-document.usecase'
+import type { ListExpiringDocumentsUseCase } from '@hrms/core/usecases/list-expiring-documents.usecase'
 import { AppModule } from '@hrms/core/contracts/roles'
 import { NotFoundError, ValidationError } from '@hrms/core'
 import { authMiddleware } from '../middleware/auth.middleware'
@@ -29,7 +35,28 @@ const renewDocumentSchema = z.object({
   expiresAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
 })
 
-export function createDocumentsController(manageDocumentsUseCase: ManageDocumentsUseCase) {
+/**
+ * Builds the document routers, wiring each HTTP route to its atomic use case.
+ *
+ * @param listDocuments - use case that lists an employee's documents
+ * @param getDocument - use case that retrieves a single document
+ * @param createDocument - use case that creates a document for an employee
+ * @param signDocument - use case that records a signature on a document
+ * @param archiveDocument - use case that archives a document
+ * @param renewDocument - use case that renews a document
+ * @param listExpiringDocuments - use case that lists documents nearing expiry
+ * @returns the employee-scoped and document-scoped Hono routers, both protected
+ *          by authentication and DOCUMENTS permissions
+ */
+export function createDocumentsController(
+  listDocuments: ListDocumentsUseCase,
+  getDocument: GetDocumentUseCase,
+  createDocument: CreateDocumentUseCase,
+  signDocument: SignDocumentUseCase,
+  archiveDocument: ArchiveDocumentUseCase,
+  renewDocument: RenewDocumentUseCase,
+  listExpiringDocuments: ListExpiringDocumentsUseCase,
+) {
   // Routes mounted at /employees prefix
   const employeeRoutes = new Hono()
   employeeRoutes.use('*', authMiddleware)
@@ -41,7 +68,7 @@ export function createDocumentsController(manageDocumentsUseCase: ManageDocument
     const q = c.req.query()
     const statusParsed = DOCUMENT_STATUS.optional().safeParse(q.status)
     const typeParsed   = DOCUMENT_TYPE.optional().safeParse(q.type)
-    const docs = await manageDocumentsUseCase.listDocuments(employeeId, {
+    const docs = await listDocuments.execute(employeeId, {
       status: statusParsed.success ? statusParsed.data : undefined,
       type:   typeParsed.success   ? typeParsed.data   : undefined,
     })
@@ -57,7 +84,7 @@ export function createDocumentsController(manageDocumentsUseCase: ManageDocument
       const { employeeId } = c.req.param()
       const body = c.req.valid('json')
       try {
-        const doc = await manageDocumentsUseCase.createDocument({ ...body, employeeId })
+        const doc = await createDocument.execute({ ...body, employeeId })
         return c.json(toDocumentDTO(doc), 201)
       } catch (err) {
         if (err instanceof NotFoundError)   return c.json({ error: err.message }, 404)
@@ -76,14 +103,14 @@ export function createDocumentsController(manageDocumentsUseCase: ManageDocument
   documentRoutes.get('/expiring', async (c) => {
     const raw  = Number(c.req.query('days') ?? 30)
     const days = isNaN(raw) ? 30 : Math.min(raw, 365)
-    const docs = await manageDocumentsUseCase.listExpiringDocuments(days)
+    const docs = await listExpiringDocuments.execute(days)
     return c.json(docs.map(toExpiringDocumentDTO))
   })
 
   // GET /documents/:id
   documentRoutes.get('/:id', async (c) => {
     try {
-      const doc = await manageDocumentsUseCase.getDocument(c.req.param('id'))
+      const doc = await getDocument.execute(c.req.param('id'))
       return c.json(toDocumentDTO(doc))
     } catch (err) {
       if (err instanceof NotFoundError) return c.json({ error: err.message }, 404)
@@ -100,7 +127,7 @@ export function createDocumentsController(manageDocumentsUseCase: ManageDocument
       const user = c.get('user') as AuthenticatedUser
       const { fileHash } = c.req.valid('json')
       try {
-        const doc = await manageDocumentsUseCase.signDocument(c.req.param('id'), fileHash, user.id)
+        const doc = await signDocument.execute(c.req.param('id'), fileHash, user.id)
         return c.json(toDocumentDTO(doc))
       } catch (err) {
         if (err instanceof NotFoundError)   return c.json({ error: err.message }, 404)
@@ -116,7 +143,7 @@ export function createDocumentsController(manageDocumentsUseCase: ManageDocument
     requirePermission(AppModule.DOCUMENTS, 'canEdit'),
     async (c) => {
       try {
-        const doc = await manageDocumentsUseCase.archiveDocument(c.req.param('id'))
+        const doc = await archiveDocument.execute(c.req.param('id'))
         return c.json(toDocumentDTO(doc))
       } catch (err) {
         if (err instanceof NotFoundError)   return c.json({ error: err.message }, 404)
@@ -134,7 +161,7 @@ export function createDocumentsController(manageDocumentsUseCase: ManageDocument
     async (c) => {
       const body = c.req.valid('json')
       try {
-        const doc = await manageDocumentsUseCase.renewDocument(c.req.param('id'), body)
+        const doc = await renewDocument.execute(c.req.param('id'), body)
         return c.json(toDocumentDTO(doc), 201)
       } catch (err) {
         if (err instanceof NotFoundError) return c.json({ error: err.message }, 404)

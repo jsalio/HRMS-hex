@@ -5,9 +5,17 @@ import {
   AbsenceRepository, AttendanceRepository,
 } from '@hrms/boundary-postgres'
 import {
-  LoginUseCase, RefreshTokenUseCase, ManageRolesUseCase,
-  ManageEmployeesUseCase, ManageDepartmentsUseCase, ManageDocumentsUseCase,
-  ManageAbsencesUseCase, ManageAttendanceUseCase,
+  LoginUseCase, RefreshTokenUseCase,
+  ListRolesUseCase, CreateRoleUseCase, UpdateRoleUseCase, DeleteRoleUseCase,
+  ListEmployeesUseCase, GetEmployeeUseCase, CreateEmployeeUseCase, UpdateEmployeeUseCase,
+  TerminateEmployeeUseCase, GetEmployeeOnboardingUseCase, UpdateOnboardingStepUseCase,
+  ListDepartmentsUseCase, CreateDepartmentUseCase,
+  ListDocumentsUseCase, GetDocumentUseCase, CreateDocumentUseCase, SignDocumentUseCase,
+  ArchiveDocumentUseCase, RenewDocumentUseCase, ListExpiringDocumentsUseCase,
+  ListAbsenceTypesUseCase, ListAbsenceBalancesUseCase, ListAbsenceRequestsUseCase,
+  RequestAbsenceUseCase, ApproveAbsenceUseCase, RejectAbsenceUseCase, CancelAbsenceUseCase,
+  ListAttendanceRecordsUseCase, GetAttendanceSummaryUseCase, CheckInUseCase,
+  CheckOutUseCase, EditAttendanceRecordUseCase,
 } from '@hrms/core'
 import { JwtTokenService } from './services/jwt-token.service'
 import { BunPasswordService } from './services/bun-password.service'
@@ -32,14 +40,48 @@ const passwordSvc = new BunPasswordService()
 // Use cases — auth
 export const loginUseCase        = new LoginUseCase(userRepo, roleRepo, tokenSvc, refreshTokenRepo, passwordSvc)
 export const refreshTokenUseCase = new RefreshTokenUseCase(refreshTokenRepo, userRepo, tokenSvc, roleRepo)
-export const manageRolesUseCase  = new ManageRolesUseCase(roleRepo)
+export const listRolesUseCase    = new ListRolesUseCase(roleRepo)
+export const createRoleUseCase   = new CreateRoleUseCase(roleRepo)
+export const updateRoleUseCase   = new UpdateRoleUseCase(roleRepo)
+export const deleteRoleUseCase   = new DeleteRoleUseCase(roleRepo)
 
 // Use cases — employees
-export const manageEmployeesUseCase   = new ManageEmployeesUseCase(employeeRepo, deptRepo, userRepo, roleRepo, refreshTokenRepo, passwordSvc)
-export const manageDepartmentsUseCase = new ManageDepartmentsUseCase(deptRepo)
-export const manageDocumentsUseCase   = new ManageDocumentsUseCase(documentRepo, employeeRepo)
-export const manageAbsencesUseCase    = new ManageAbsencesUseCase(absenceRepo, employeeRepo)
-export const manageAttendanceUseCase  = new ManageAttendanceUseCase(attendanceRepo, employeeRepo)
+export const listEmployeesUseCase       = new ListEmployeesUseCase(employeeRepo)
+export const getEmployeeUseCase          = new GetEmployeeUseCase(employeeRepo)
+export const createEmployeeUseCase       = new CreateEmployeeUseCase(employeeRepo, deptRepo, userRepo, roleRepo, passwordSvc)
+export const updateEmployeeUseCase       = new UpdateEmployeeUseCase(employeeRepo, deptRepo)
+export const terminateEmployeeUseCase    = new TerminateEmployeeUseCase(employeeRepo, userRepo, refreshTokenRepo)
+export const getEmployeeOnboardingUseCase = new GetEmployeeOnboardingUseCase(employeeRepo)
+export const updateOnboardingStepUseCase = new UpdateOnboardingStepUseCase(employeeRepo)
+
+// Use cases — departments
+export const listDepartmentsUseCase  = new ListDepartmentsUseCase(deptRepo)
+export const createDepartmentUseCase = new CreateDepartmentUseCase(deptRepo)
+
+// Use cases — documents
+export const listDocumentsUseCase         = new ListDocumentsUseCase(documentRepo)
+export const getDocumentUseCase           = new GetDocumentUseCase(documentRepo)
+export const createDocumentUseCase        = new CreateDocumentUseCase(documentRepo, employeeRepo)
+export const signDocumentUseCase          = new SignDocumentUseCase(documentRepo)
+export const archiveDocumentUseCase       = new ArchiveDocumentUseCase(documentRepo)
+export const renewDocumentUseCase         = new RenewDocumentUseCase(documentRepo)
+export const listExpiringDocumentsUseCase = new ListExpiringDocumentsUseCase(documentRepo)
+
+// Use cases — absences
+export const listAbsenceTypesUseCase    = new ListAbsenceTypesUseCase(absenceRepo)
+export const listAbsenceBalancesUseCase = new ListAbsenceBalancesUseCase(absenceRepo)
+export const listAbsenceRequestsUseCase = new ListAbsenceRequestsUseCase(absenceRepo)
+export const requestAbsenceUseCase      = new RequestAbsenceUseCase(absenceRepo, employeeRepo)
+export const approveAbsenceUseCase      = new ApproveAbsenceUseCase(absenceRepo)
+export const rejectAbsenceUseCase       = new RejectAbsenceUseCase(absenceRepo)
+export const cancelAbsenceUseCase       = new CancelAbsenceUseCase(absenceRepo)
+
+// Use cases — attendance
+export const listAttendanceRecordsUseCase = new ListAttendanceRecordsUseCase(attendanceRepo)
+export const getAttendanceSummaryUseCase  = new GetAttendanceSummaryUseCase(attendanceRepo)
+export const checkInUseCase               = new CheckInUseCase(attendanceRepo, employeeRepo)
+export const checkOutUseCase              = new CheckOutUseCase(attendanceRepo)
+export const editAttendanceRecordUseCase  = new EditAttendanceRecordUseCase(attendanceRepo)
 
 // Expose repos needed by controllers
 export { refreshTokenRepo, tokenSvc }

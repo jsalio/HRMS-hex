@@ -32,6 +32,7 @@ interface OnboardingRow {
   created_at: Date
 }
 
+/** Maps a raw employees-with-department row to an EmployeeSummary. */
 function toSummary(row: EmployeeRow): EmployeeSummary {
   return {
     id: row.id,
@@ -46,6 +47,7 @@ function toSummary(row: EmployeeRow): EmployeeSummary {
   }
 }
 
+/** Maps a raw employee_onboarding table row to an EmployeeOnboarding step. */
 function toOnboarding(row: OnboardingRow): EmployeeOnboarding {
   return {
     id: row.id,
@@ -58,9 +60,22 @@ function toOnboarding(row: OnboardingRow): EmployeeOnboarding {
   }
 }
 
+/**
+ * Postgres adapter implementing IEmployeeRepository over the `employees`,
+ * `departments` and `employee_onboarding` tables.
+ */
 export class EmployeeRepository implements IEmployeeRepository {
+  /**
+   * @param sql - Postgres client used to execute employee queries
+   */
   constructor(private readonly sql: Sql) {}
 
+  /**
+   * Reads a paginated, optionally filtered page of employee summaries.
+   *
+   * @param query - pagination and optional department, status and search-term filters
+   * @returns the matching employee summaries for the page, the overall total and the current page
+   */
   async findAll(query: EmployeeListQuery): Promise<EmployeeListResult> {
     const page  = query.page  ?? 1
     const limit = query.limit ?? 20
@@ -95,6 +110,12 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
+  /**
+   * Reads the full detail of an employee, including their onboarding steps.
+   *
+   * @param id - identifier of the employee to read
+   * @returns the matching employee detail, or null when none exists
+   */
   async findById(id: string): Promise<EmployeeDetail | null> {
     const rows = await this.sql<EmployeeRow[]>`
       SELECT
@@ -119,6 +140,12 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
+  /**
+   * Reads an employee summary by corporate email.
+   *
+   * @param email - corporate email address to look up
+   * @returns the matching employee summary, or null when none exists
+   */
   async findByEmail(email: string): Promise<EmployeeSummary | null> {
     const rows = await this.sql<EmployeeRow[]>`
       SELECT e.id, e.full_name, e.document_id, e.corporate_email,
@@ -132,6 +159,12 @@ export class EmployeeRepository implements IEmployeeRepository {
     return rows[0] ? toSummary(rows[0]) : null
   }
 
+  /**
+   * Reads an employee summary by national/document identifier.
+   *
+   * @param documentId - government-issued document id to look up
+   * @returns the matching employee summary, or null when none exists
+   */
   async findByDocumentId(documentId: string): Promise<EmployeeSummary | null> {
     const rows = await this.sql<EmployeeRow[]>`
       SELECT e.id, e.full_name, e.document_id, e.corporate_email,
@@ -145,6 +178,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     return rows[0] ? toSummary(rows[0]) : null
   }
 
+  /**
+   * Persists a new employee and seeds its onboarding steps in a single transaction.
+   *
+   * @param input - personal, contractual and department data for the new employee
+   * @returns the created employee detail, including its seeded onboarding steps
+   * @throws {Error} when the employee insert returns no row
+   */
   async create(input: CreateEmployeeInput): Promise<EmployeeDetail> {
     return this.sql.begin(async (tx) => {
       const [empRow] = await tx<EmployeeRow[]>`
@@ -182,6 +222,14 @@ export class EmployeeRepository implements IEmployeeRepository {
     })
   }
 
+  /**
+   * Applies a partial update to an employee, leaving omitted fields unchanged.
+   *
+   * @param id - identifier of the employee to update
+   * @param input - subset of name, department, job title, salary and status to overwrite
+   * @returns the updated employee summary
+   * @throws {Error} when no employee matches the given id
+   */
   async update(id: string, input: UpdateEmployeeInput): Promise<EmployeeSummary> {
     const [row] = await this.sql<EmployeeRow[]>`
       UPDATE employees SET
@@ -203,6 +251,14 @@ export class EmployeeRepository implements IEmployeeRepository {
     return toSummary({ ...row, department_name: deptRow!.name })
   }
 
+  /**
+   * Terminates an employee, setting their status to inactive and recording the date.
+   *
+   * @param id - identifier of the employee to terminate
+   * @param terminationDate - effective date of termination
+   * @returns the updated employee summary
+   * @throws {Error} when no employee matches the given id
+   */
   async terminate(id: string, terminationDate: Date): Promise<EmployeeSummary> {
     const [row] = await this.sql<EmployeeRow[]>`
       UPDATE employees SET
@@ -221,6 +277,12 @@ export class EmployeeRepository implements IEmployeeRepository {
     return toSummary({ ...row, department_name: deptRow!.name })
   }
 
+  /**
+   * Reads an employee's onboarding steps in canonical step order.
+   *
+   * @param employeeId - identifier of the employee whose onboarding is read
+   * @returns the employee's onboarding steps
+   */
   async findOnboarding(employeeId: string): Promise<EmployeeOnboarding[]> {
     const rows = await this.sql<OnboardingRow[]>`
       SELECT id, employee_id, step, completed, completed_at, notes, created_at
@@ -231,6 +293,16 @@ export class EmployeeRepository implements IEmployeeRepository {
     return rows.map(toOnboarding)
   }
 
+  /**
+   * Updates a single onboarding step's completion state and optional notes.
+   *
+   * @param employeeId - identifier of the employee owning the step
+   * @param step - name of the onboarding step to update
+   * @param completed - whether the step is now complete; sets or clears its completion time
+   * @param notes - optional notes to record; omitting leaves existing notes unchanged
+   * @returns the updated onboarding step
+   * @throws {Error} when the step does not exist for the employee
+   */
   async updateOnboardingStep(
     employeeId: string,
     step: OnboardingStepName,

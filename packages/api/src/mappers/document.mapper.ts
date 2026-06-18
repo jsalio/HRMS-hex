@@ -1,5 +1,11 @@
 import type { EmployeeDocumentData, ExpiringDocumentData } from '@hrms/core/contracts/documents'
 
+/**
+ * Converts an employee document read model into its serialisable API DTO.
+ *
+ * @param d - employee document data coming from the documents contract
+ * @returns the flat document DTO exposed by the HTTP layer
+ */
 export function toDocumentDTO(d: EmployeeDocumentData) {
   return {
     id:            d.id,
@@ -20,6 +26,13 @@ export function toDocumentDTO(d: EmployeeDocumentData) {
   }
 }
 
+/**
+ * Converts an expiring document read model into its API DTO, including the
+ * related employee reference alongside the base document fields.
+ *
+ * @param d - expiring document data coming from the documents contract
+ * @returns the document DTO augmented with its `employee` reference
+ */
 export function toExpiringDocumentDTO(d: ExpiringDocumentData) {
   return { ...toDocumentDTO(d), employee: d.employee }
 }

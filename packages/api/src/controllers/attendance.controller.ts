@@ -1,7 +1,11 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { ManageAttendanceUseCase } from '@hrms/core/usecases/manage-attendance.usecase'
+import type { ListAttendanceRecordsUseCase } from '@hrms/core/usecases/list-attendance-records.usecase'
+import type { GetAttendanceSummaryUseCase } from '@hrms/core/usecases/get-attendance-summary.usecase'
+import type { CheckInUseCase } from '@hrms/core/usecases/check-in.usecase'
+import type { CheckOutUseCase } from '@hrms/core/usecases/check-out.usecase'
+import type { EditAttendanceRecordUseCase } from '@hrms/core/usecases/edit-attendance-record.usecase'
 import { AppModule } from '@hrms/core/contracts/roles'
 import { NotFoundError, ValidationError, ConflictError } from '@hrms/core'
 import { authMiddleware } from '../middleware/auth.middleware'
@@ -26,14 +30,30 @@ function handleError(c: any, err: unknown) {
   throw err
 }
 
-export function createAttendanceController(uc: ManageAttendanceUseCase) {
+/**
+ * Builds the `/attendance` router, wiring each HTTP route to its atomic use case.
+ *
+ * @param listRecords - use case that returns a paginated list of attendance records
+ * @param getSummary - use case that computes an employee's attendance summary
+ * @param checkIn - use case that registers an employee check-in
+ * @param checkOut - use case that registers an employee check-out
+ * @param editRecord - use case that applies manual corrections to a record
+ * @returns a Hono router protected by authentication and ATTENDANCE permissions
+ */
+export function createAttendanceController(
+  listRecords: ListAttendanceRecordsUseCase,
+  getSummary: GetAttendanceSummaryUseCase,
+  checkIn: CheckInUseCase,
+  checkOut: CheckOutUseCase,
+  editRecord: EditAttendanceRecordUseCase,
+) {
   const app = new Hono()
   app.use('*', authMiddleware)
 
   // GET /attendance
   app.get('/', requirePermission(AppModule.ATTENDANCE, 'canView'), async c => {
     const q = c.req.query()
-    const result = await uc.listRecords({
+    const result = await listRecords.execute({
       employeeId: q.employee_id,
       status:     q.status as any,
       from:       q.from,
@@ -50,7 +70,7 @@ export function createAttendanceController(uc: ManageAttendanceUseCase) {
     if (!employee_id || !from || !to) {
       return c.json({ error: 'employee_id, from and to are required' }, 422)
     }
-    const summary = await uc.getSummary(employee_id, from, to)
+    const summary = await getSummary.execute(employee_id, from, to)
     return c.json(summary)
   })
 
@@ -58,7 +78,7 @@ export function createAttendanceController(uc: ManageAttendanceUseCase) {
   app.post('/check-in', requirePermission(AppModule.ATTENDANCE, 'canCreate'), zValidator('json', checkInSchema), async c => {
     const { employee_id, timestamp } = c.req.valid('json')
     try {
-      const record = await uc.checkIn(employee_id, new Date(timestamp))
+      const record = await checkIn.execute(employee_id, new Date(timestamp))
       return c.json(record, 201)
     } catch (err) { return handleError(c, err) }
   })
@@ -67,7 +87,7 @@ export function createAttendanceController(uc: ManageAttendanceUseCase) {
   app.post('/check-out', requirePermission(AppModule.ATTENDANCE, 'canCreate'), zValidator('json', checkOutSchema), async c => {
     const { employee_id, timestamp } = c.req.valid('json')
     try {
-      const record = await uc.checkOut(employee_id, new Date(timestamp))
+      const record = await checkOut.execute(employee_id, new Date(timestamp))
       return c.json(record)
     } catch (err) { return handleError(c, err) }
   })
@@ -76,7 +96,7 @@ export function createAttendanceController(uc: ManageAttendanceUseCase) {
   app.patch('/:id', requirePermission(AppModule.ATTENDANCE, 'canEdit'), zValidator('json', editSchema), async c => {
     const body = c.req.valid('json')
     try {
-      const record = await uc.editRecord(c.req.param('id'), {
+      const record = await editRecord.execute(c.req.param('id'), {
         checkIn:  body.check_in  ? new Date(body.check_in)  : undefined,
         checkOut: body.check_out ? new Date(body.check_out) : undefined,
         status:   body.status,

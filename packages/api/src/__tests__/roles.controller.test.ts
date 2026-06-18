@@ -4,7 +4,7 @@ process.env.JWT_SECRET = 'test-secret-at-least-32-characters-x'
 
 import { Hono } from 'hono'
 import { createRolesController } from '../controllers/roles.controller'
-import type { ManageRolesUseCase } from '@hrms/core'
+import type { ListRolesUseCase, CreateRoleUseCase, UpdateRoleUseCase, DeleteRoleUseCase } from '@hrms/core'
 import { Role, AppModule, DomainError } from '@hrms/core'
 import { SignJWT } from 'jose'
 
@@ -24,17 +24,21 @@ async function makeToken(permissions: Array<{ module: AppModule; canView: boolea
 const superAdminRole = new Role({ id: 'r-sa', name: 'super_admin', isSystem: true, permissions: [] })
 const customRole = new Role({ id: 'r-c', name: 'supervisor', isSystem: false, permissions: [] })
 
-function buildApp(overrides: Partial<ManageRolesUseCase> = {}) {
-  const useCase = {
-    listRoles: mock(() => Promise.resolve([superAdminRole, customRole])),
-    createRole: mock(() => Promise.resolve(customRole)),
-    updateRole: mock(() => Promise.resolve(customRole)),
-    deleteRole: mock(() => Promise.resolve()),
-    ...overrides,
-  } as unknown as ManageRolesUseCase
+interface UseCaseOverrides {
+  listRoles?: () => Promise<unknown>
+  createRole?: () => Promise<unknown>
+  updateRole?: () => Promise<unknown>
+  deleteRole?: () => Promise<unknown>
+}
+
+function buildApp(overrides: UseCaseOverrides = {}) {
+  const listRoles  = { execute: overrides.listRoles  ?? mock(() => Promise.resolve([superAdminRole, customRole])) } as unknown as ListRolesUseCase
+  const createRole = { execute: overrides.createRole ?? mock(() => Promise.resolve(customRole)) } as unknown as CreateRoleUseCase
+  const updateRole = { execute: overrides.updateRole ?? mock(() => Promise.resolve(customRole)) } as unknown as UpdateRoleUseCase
+  const deleteRole = { execute: overrides.deleteRole ?? mock(() => Promise.resolve()) } as unknown as DeleteRoleUseCase
 
   const app = new Hono()
-  app.route('/roles', createRolesController(useCase))
+  app.route('/roles', createRolesController(listRoles, createRole, updateRole, deleteRole))
   return app
 }
 

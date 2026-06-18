@@ -35,10 +35,15 @@ El proyecto empezó desde cero — no había código existente que impusiera sil
 
 No lo hice porque no ejecuté una verificación de conflictos entre instrucciones antes de implementar.
 
-### Resolución
+### Resolución — RESUELTO (2026-06-18)
 
 - CLAUDE.md de proyecto creado con la regla en modo estricto — commit `6cc1e69`
-- Los sub-specs 1–5 tienen funciones públicas sin JSDoc. Pendiente retroactivo o aceptado como deuda técnica documentada.
+- Pasada retroactiva de TSDoc completa sobre toda la superficie pública de los sub-specs 1–5:
+  - **Use cases** (los 32 atómicos), **contratos** y **controllers** — durante el refactor de INC-002
+  - **Dominio** (`packages/core/src/domain/`: errors, employee, user, absence-balance, attendance-record, employee-document, role)
+  - **Repositorios** (`packages/boundary-postgres/src/repositories/`: los 8 adapters)
+  - **Mappers y services** (`packages/api/src/mappers`, `packages/api/src/services`)
+- Verificación: cambios solo de comentarios (789 inserciones de TSDoc), suite verde (core 96/96, api 8/8).
 
 ---
 
@@ -102,13 +107,23 @@ El proyecto empezó desde cero. No había estructuras existentes que forzaran el
 
 **No emití advertencia porque ningún skill tiene un paso explícito que valide: "¿Esta clase tiene más de una responsabilidad de negocio? → DETENER."** El check existe como texto descriptivo pero no como punto de bloqueo en el flujo. Pasó por todos los filtros del pipeline sin disparar ninguno.
 
-### Resolución pendiente
+### Resolución — RESUELTO (2026-06-18)
 
-Dos opciones:
-1. **Refactor completo** — descomponer todos los ManageX en use cases atómicos antes de continuar
-2. **Deuda documentada** — continuar con la estructura correcta desde sub-spec 6, refactorizar los 1–5 en una sesión dedicada
+Se aplicó el **refactor completo** (opción 1). Los 6 `ManageXUseCase` se descompusieron en use cases atómicos (un caso de uso por clase, método único `execute`):
 
-Pendiente decisión del usuario.
+| Módulo | ManageX eliminado | Use cases atómicos |
+|---|---|---|
+| roles | `ManageRolesUseCase` | 4 (List/Create/Update/Delete) |
+| employees | `ManageEmployeesUseCase` | 7 |
+| departments | `ManageDepartmentsUseCase` | 2 |
+| documents | `ManageDocumentsUseCase` | 7 |
+| absences | `ManageAbsencesUseCase` | 7 |
+| attendance | `ManageAttendanceUseCase` | 5 |
+
+Además se aplicó **composición de contratos** (skill `contract-composition`): capacidades atómicas + contratos compuestos por use case + puerto completo `I<Entidad>Repository` que las une. Cada use case depende solo de lo que usa.
+
+Decisión formalizada en **ADR-0001** (`docs/adr/0001-atomic-use-cases-and-contract-composition.md`).
+Verificación: core 96/96, api 8/8, carga del módulo API OK.
 
 ---
 
@@ -140,6 +155,6 @@ Se ejecuta automáticamente al inicio de cada `/implement` y Fase 7 de `/dev`.
 
 | ID | Estado | Resolución |
 |---|---|---|
-| INC-001 | **Deuda técnica** | CLAUDE.md creado (sub-specs futuros OK). Sub-specs 1–5 sin JSDoc — pendiente sesión de retroactivo |
-| INC-002 | **Deuda técnica** | Patrón ManageX en sub-specs 1–5. Estructura correcta (UseCase atómico) desde sub-spec 6 en adelante |
-| — | Sistémica resuelta | Skill `/sdd-preflight` creado — enforcea CHECK-1 (docs) y CHECK-2 (SRP) antes de cada implementación |
+| INC-001 | **Resuelto** | TSDoc completo en toda la superficie pública de los sub-specs 1–5: use cases, contratos, controllers, dominio, repositorios, mappers y services |
+| INC-002 | **Resuelto** | Refactor completo a use cases atómicos + composición de contratos en los 6 módulos. Formalizado en ADR-0001 |
+| — | Sistémica resuelta | Skill `/sdd-preflight` creado — enforcea CHECK-1 (docs) y CHECK-2 (SRP) antes de cada implementación. ADR-0001 fija el principio como norma del proyecto |

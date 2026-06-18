@@ -8,12 +8,19 @@ export interface RoleProps {
   permissions: RolePermission[]
 }
 
+/**
+ * Domain entity representing an authorization role and its permission set.
+ * Enforces the invariants that protect system roles and the super_admin override.
+ */
 export class Role {
   readonly id: string
   private _name: string
   readonly isSystem: boolean
   private _permissions: RolePermission[]
 
+  /**
+   * @param props - identity, name, system flag and permission set of the role
+   */
   constructor(props: RoleProps) {
     this.id = props.id
     this._name = props.name
@@ -21,10 +28,19 @@ export class Role {
     this._permissions = props.permissions
   }
 
+  /**
+   * @returns the current role name
+   */
   get name(): string {
     return this._name
   }
 
+  /**
+   * Renames the role.
+   *
+   * @param newName - the new role name
+   * @throws {DomainError} when the role is a system role and cannot be renamed
+   */
   rename(newName: string): void {
     if (this.isSystem) {
       throw new DomainError(`Cannot rename system role "${this._name}"`)
@@ -32,12 +48,22 @@ export class Role {
     this._name = newName
   }
 
+  /**
+   * Guards deletion of the role.
+   *
+   * @throws {DomainError} when the role is a system role and cannot be deleted
+   */
   assertCanDelete(): void {
     if (this.isSystem) {
       throw new DomainError(`Cannot delete system role "${this._name}"`)
     }
   }
 
+  /**
+   * Replaces the role's permission set.
+   *
+   * @param permissions - the new permission set to assign
+   */
   updatePermissions(permissions: RolePermission[]): void {
     this._permissions = permissions
   }

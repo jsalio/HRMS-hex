@@ -4,6 +4,7 @@ import type {
   AttendanceSummary, AttendanceStatus,
 } from '@hrms/core/contracts/attendance'
 
+/** Maps a raw attendance_records table row to an AttendanceRecordData. */
 function toData(row: any): AttendanceRecordData {
   return {
     id:          row.id,
@@ -19,9 +20,21 @@ function toData(row: any): AttendanceRecordData {
   }
 }
 
+/**
+ * Postgres adapter implementing IAttendanceRepository over the `attendance_records` table.
+ */
 export class AttendanceRepository implements IAttendanceRepository {
+  /**
+   * @param sql - Postgres client used to execute attendance queries
+   */
   constructor(private readonly sql: Sql) {}
 
+  /**
+   * Reads a paginated, optionally filtered page of attendance records.
+   *
+   * @param query - pagination and optional employee, status and date-range filters
+   * @returns the matching records for the page and the total count across all pages
+   */
   async findAll(query: AttendanceListQuery): Promise<{ data: AttendanceRecordData[]; total: number }> {
     const limit  = Math.min(query.limit ?? 20, 100)
     const offset = ((query.page ?? 1) - 1) * limit
@@ -49,11 +62,24 @@ export class AttendanceRepository implements IAttendanceRepository {
     return { data: rows.map(toData), total: count }
   }
 
+  /**
+   * Reads a single attendance record by its identifier.
+   *
+   * @param id - identifier of the attendance record to read
+   * @returns the matching record, or null when none exists
+   */
   async findById(id: string): Promise<AttendanceRecordData | null> {
     const rows = await this.sql`SELECT * FROM attendance_records WHERE id = ${id}`
     return rows[0] ? toData(rows[0]) : null
   }
 
+  /**
+   * Reads the attendance record for a given employee on a given day.
+   *
+   * @param employeeId - identifier of the employee
+   * @param date - calendar day in ISO `YYYY-MM-DD` form
+   * @returns the matching record, or null when none exists
+   */
   async findByEmployeeAndDate(employeeId: string, date: string): Promise<AttendanceRecordData | null> {
     const rows = await this.sql`
       SELECT * FROM attendance_records WHERE employee_id = ${employeeId} AND date = ${date}
@@ -61,6 +87,13 @@ export class AttendanceRepository implements IAttendanceRepository {
     return rows[0] ? toData(rows[0]) : null
   }
 
+  /**
+   * Persists a new check-in record for an employee, marking them present.
+   *
+   * @param employeeId - identifier of the employee checking in
+   * @param timestamp - moment of the check-in; its date determines the record's day
+   * @returns the created attendance record
+   */
   async createCheckIn(employeeId: string, timestamp: Date): Promise<AttendanceRecordData> {
     const date = timestamp.toISOString().slice(0, 10)
     const rows = await this.sql`
@@ -71,6 +104,13 @@ export class AttendanceRepository implements IAttendanceRepository {
     return toData(rows[0])
   }
 
+  /**
+   * Records the check-out time on an existing attendance record.
+   *
+   * @param id - identifier of the attendance record to close out
+   * @param timestamp - moment of the check-out
+   * @returns the updated attendance record
+   */
   async updateCheckOut(id: string, timestamp: Date): Promise<AttendanceRecordData> {
     const rows = await this.sql`
       UPDATE attendance_records
@@ -81,6 +121,13 @@ export class AttendanceRepository implements IAttendanceRepository {
     return toData(rows[0])
   }
 
+  /**
+   * Applies a partial update to an attendance record, leaving omitted fields unchanged.
+   *
+   * @param id - identifier of the attendance record to update
+   * @param data - subset of check-in, check-out, status and notes fields to overwrite
+   * @returns the updated attendance record
+   */
   async update(
     id: string,
     data: Partial<Pick<AttendanceRecordData, 'checkIn' | 'checkOut' | 'status' | 'notes'>>
@@ -98,6 +145,14 @@ export class AttendanceRepository implements IAttendanceRepository {
     return toData(rows[0])
   }
 
+  /**
+   * Aggregates an employee's attendance over a date range into summary counters.
+   *
+   * @param employeeId - identifier of the employee to summarize
+   * @param from - inclusive start day in ISO `YYYY-MM-DD` form
+   * @param to - inclusive end day in ISO `YYYY-MM-DD` form
+   * @returns totals for days, present, absent and late days plus total hours worked
+   */
   async getSummary(employeeId: string, from: string, to: string): Promise<AttendanceSummary> {
     const [row] = await this.sql`
       SELECT

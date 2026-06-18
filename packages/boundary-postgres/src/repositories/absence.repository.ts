@@ -6,6 +6,7 @@ import type {
   AbsenceStatus,
 } from '@hrms/core/contracts/absences'
 
+/** Maps a raw absence_types table row to an AbsenceTypeData. */
 function toTypeData(row: any): AbsenceTypeData {
   return {
     id: row.id,
@@ -16,6 +17,7 @@ function toTypeData(row: any): AbsenceTypeData {
   }
 }
 
+/** Maps a raw absence_balances row (optionally joined with its type) to an AbsenceBalanceData. */
 function toBalanceData(row: any): AbsenceBalanceData {
   return {
     id: row.id,
@@ -34,6 +36,7 @@ function toBalanceData(row: any): AbsenceBalanceData {
   }
 }
 
+/** Maps a raw absence_requests row (optionally joined with its type) to an AbsenceRequestData. */
 function toRequestData(row: any): AbsenceRequestData {
   return {
     id: row.id,
@@ -58,19 +61,44 @@ function toRequestData(row: any): AbsenceRequestData {
   }
 }
 
+/**
+ * Postgres adapter implementing IAbsenceRepository over the `absence_types`,
+ * `absence_balances` and `absence_requests` tables.
+ */
 export class AbsenceRepository implements IAbsenceRepository {
+  /**
+   * @param sql - Postgres client used to execute absence queries
+   */
   constructor(private readonly sql: Sql) {}
 
+  /**
+   * Reads every absence type ordered alphabetically by name.
+   *
+   * @returns all absence types configured in the system
+   */
   async findAbsenceTypes(): Promise<AbsenceTypeData[]> {
     const rows = await this.sql`SELECT * FROM absence_types ORDER BY name`
     return rows.map(toTypeData)
   }
 
+  /**
+   * Reads a single absence type by its identifier.
+   *
+   * @param id - identifier of the absence type to read
+   * @returns the matching absence type, or null when none exists
+   */
   async findAbsenceTypeById(id: string): Promise<AbsenceTypeData | null> {
     const rows = await this.sql`SELECT * FROM absence_types WHERE id = ${id}`
     return rows[0] ? toTypeData(rows[0]) : null
   }
 
+  /**
+   * Reads an employee's absence balances for a given year, each joined with its type.
+   *
+   * @param employeeId - identifier of the employee whose balances are read
+   * @param year - calendar year of the balances
+   * @returns the employee's balances for that year
+   */
   async findBalancesByEmployee(employeeId: string, year: number): Promise<AbsenceBalanceData[]> {
     const rows = await this.sql`
       SELECT ab.*,
@@ -85,6 +113,16 @@ export class AbsenceRepository implements IAbsenceRepository {
     return rows.map(toBalanceData)
   }
 
+  /**
+   * Returns the existing balance for an employee, type and year, creating it if absent.
+   * When it already exists, its allocation is raised to at least the requested value.
+   *
+   * @param employeeId - identifier of the employee
+   * @param absenceTypeId - identifier of the absence type
+   * @param year - calendar year of the balance
+   * @param allocatedDays - days to allocate; existing allocations are never lowered below this
+   * @returns the existing or newly created balance
+   */
   async findOrCreateBalance(
     employeeId: string, absenceTypeId: string, year: number, allocatedDays: number
   ): Promise<AbsenceBalanceData> {
@@ -98,6 +136,13 @@ export class AbsenceRepository implements IAbsenceRepository {
     return toBalanceData(rows[0])
   }
 
+  /**
+   * Adds days to a balance's pending total, reserving them for a request.
+   *
+   * @param balanceId - identifier of the balance to adjust
+   * @param days - number of days to reserve as pending
+   * @returns the updated balance
+   */
   async reservePendingDays(balanceId: string, days: number): Promise<AbsenceBalanceData> {
     const rows = await this.sql`
       UPDATE absence_balances
@@ -108,6 +153,13 @@ export class AbsenceRepository implements IAbsenceRepository {
     return toBalanceData(rows[0])
   }
 
+  /**
+   * Removes days from a balance's pending total, never dropping below zero.
+   *
+   * @param balanceId - identifier of the balance to adjust
+   * @param days - number of pending days to release
+   * @returns the updated balance
+   */
   async releasePendingDays(balanceId: string, days: number): Promise<AbsenceBalanceData> {
     const rows = await this.sql`
       UPDATE absence_balances
@@ -118,6 +170,13 @@ export class AbsenceRepository implements IAbsenceRepository {
     return toBalanceData(rows[0])
   }
 
+  /**
+   * Confirms reserved days on a balance, moving them from pending to used.
+   *
+   * @param balanceId - identifier of the balance to adjust
+   * @param days - number of days to confirm as used
+   * @returns the updated balance
+   */
   async approveBalance(balanceId: string, days: number): Promise<AbsenceBalanceData> {
     const rows = await this.sql`
       UPDATE absence_balances
@@ -129,6 +188,12 @@ export class AbsenceRepository implements IAbsenceRepository {
     return toBalanceData(rows[0])
   }
 
+  /**
+   * Reads a paginated, optionally filtered page of absence requests, each joined with its type.
+   *
+   * @param query - pagination and optional employee, status and date-range filters
+   * @returns the matching requests for the page and the total count across all pages
+   */
   async findRequests(query: AbsenceRequestQuery): Promise<{ data: AbsenceRequestData[]; total: number }> {
     const limit  = Math.min(query.limit ?? 20, 100)
     const offset = ((query.page ?? 1) - 1) * limit
@@ -162,6 +227,12 @@ export class AbsenceRepository implements IAbsenceRepository {
     return { data: rows.map(toRequestData), total: count }
   }
 
+  /**
+   * Reads a single absence request by its identifier, joined with its type.
+   *
+   * @param id - identifier of the absence request to read
+   * @returns the matching request, or null when none exists
+   */
   async findRequestById(id: string): Promise<AbsenceRequestData | null> {
     const rows = await this.sql`
       SELECT ar.*,
@@ -176,6 +247,16 @@ export class AbsenceRepository implements IAbsenceRepository {
     return rows[0] ? toRequestData(rows[0]) : null
   }
 
+  /**
+   * Reads pending or approved requests of the same type that overlap a date range,
+   * used to detect conflicting absences.
+   *
+   * @param employeeId - identifier of the employee
+   * @param absenceTypeId - identifier of the absence type to check
+   * @param startDate - inclusive range start in ISO `YYYY-MM-DD` form
+   * @param endDate - inclusive range end in ISO `YYYY-MM-DD` form
+   * @returns the overlapping requests, empty when there is no conflict
+   */
   async findOverlapping(
     employeeId: string, absenceTypeId: string, startDate: string, endDate: string
   ): Promise<AbsenceRequestData[]> {
@@ -190,6 +271,12 @@ export class AbsenceRepository implements IAbsenceRepository {
     return rows.map(toRequestData)
   }
 
+  /**
+   * Persists a new absence request in its initial state.
+   *
+   * @param input - employee, type, date range, working days and optional reason for the request
+   * @returns the created absence request
+   */
   async createRequest(input: CreateAbsenceRequestInput): Promise<AbsenceRequestData> {
     const rows = await this.sql`
       INSERT INTO absence_requests
@@ -202,6 +289,16 @@ export class AbsenceRepository implements IAbsenceRepository {
     return toRequestData(rows[0])
   }
 
+  /**
+   * Updates an absence request's status and review metadata. The review timestamp
+   * is set when a reviewer is provided and cleared otherwise.
+   *
+   * @param id - identifier of the request to update
+   * @param status - new status for the request
+   * @param reviewedBy - identifier of the reviewer, or null when not yet reviewed
+   * @param reviewNotes - notes recorded by the reviewer, or null
+   * @returns the updated absence request
+   */
   async updateRequestStatus(
     id: string, status: AbsenceStatus, reviewedBy: string | null, reviewNotes: string | null
   ): Promise<AbsenceRequestData> {

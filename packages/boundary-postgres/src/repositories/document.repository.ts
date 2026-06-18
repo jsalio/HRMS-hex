@@ -26,6 +26,7 @@ interface DocumentRow {
   updated_at: Date
 }
 
+/** Maps a raw employee_documents table row to an EmployeeDocumentData. */
 function toData(row: DocumentRow): EmployeeDocumentData {
   return {
     id:                row.id,
@@ -47,9 +48,22 @@ function toData(row: DocumentRow): EmployeeDocumentData {
   }
 }
 
+/**
+ * Postgres adapter implementing IDocumentRepository over the `employee_documents` table.
+ */
 export class DocumentRepository implements IDocumentRepository {
+  /**
+   * @param sql - Postgres client used to execute document queries
+   */
   constructor(private readonly sql: Sql) {}
 
+  /**
+   * Reads an employee's documents, newest first, optionally filtered by status and type.
+   *
+   * @param employeeId - identifier of the owning employee
+   * @param filters - optional status and/or type to restrict the result
+   * @returns the matching documents for the employee
+   */
   async findByEmployee(
     employeeId: string,
     filters: { status?: DocumentStatus; type?: DocumentType } = {},
@@ -64,6 +78,12 @@ export class DocumentRepository implements IDocumentRepository {
     return rows.map(toData)
   }
 
+  /**
+   * Reads a single document by its identifier.
+   *
+   * @param id - identifier of the document to read
+   * @returns the matching document, or null when none exists
+   */
   async findById(id: string): Promise<EmployeeDocumentData | null> {
     const [row] = await this.sql<DocumentRow[]>`
       SELECT * FROM employee_documents WHERE id = ${id}
@@ -71,6 +91,13 @@ export class DocumentRepository implements IDocumentRepository {
     return row ? toData(row) : null
   }
 
+  /**
+   * Persists a new employee document.
+   *
+   * @param data - owning employee, name, type, file location and optional template,
+   *               expiry and source-document link for the new document
+   * @returns the created document
+   */
   async create(data: {
     employeeId: string
     templateId?: string | null
@@ -91,6 +118,13 @@ export class DocumentRepository implements IDocumentRepository {
     return toData(row!)
   }
 
+  /**
+   * Marks a document as signed, recording its content hash and signer.
+   *
+   * @param id - identifier of the document to sign
+   * @param data - content hash, signer identifier and moment of signing
+   * @returns the updated document
+   */
   async sign(
     id: string,
     data: { fileHash: string; signedBy: string; signedAt: Date },
@@ -108,6 +142,13 @@ export class DocumentRepository implements IDocumentRepository {
     return toData(row!)
   }
 
+  /**
+   * Marks a document as archived.
+   *
+   * @param id - identifier of the document to archive
+   * @param archivedAt - moment the document was archived
+   * @returns the updated document
+   */
   async archive(id: string, archivedAt: Date): Promise<EmployeeDocumentData> {
     const [row] = await this.sql<DocumentRow[]>`
       UPDATE employee_documents
@@ -120,6 +161,13 @@ export class DocumentRepository implements IDocumentRepository {
     return toData(row!)
   }
 
+  /**
+   * Reads non-archived documents expiring within a window from today, each joined
+   * with its owning employee's name and corporate email.
+   *
+   * @param daysFromNow - size of the upcoming window, in days, to consider as expiring
+   * @returns the matching documents with their owning employee summary, soonest first
+   */
   async findExpiring(daysFromNow: number): Promise<ExpiringDocumentData[]> {
     const rows = await this.sql<(DocumentRow & {
       employee_full_name: string

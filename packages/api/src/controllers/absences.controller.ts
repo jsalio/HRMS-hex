@@ -1,7 +1,13 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { ManageAbsencesUseCase } from '@hrms/core/usecases/manage-absences.usecase'
+import type { ListAbsenceTypesUseCase } from '@hrms/core/usecases/list-absence-types.usecase'
+import type { ListAbsenceBalancesUseCase } from '@hrms/core/usecases/list-absence-balances.usecase'
+import type { ListAbsenceRequestsUseCase } from '@hrms/core/usecases/list-absence-requests.usecase'
+import type { RequestAbsenceUseCase } from '@hrms/core/usecases/request-absence.usecase'
+import type { ApproveAbsenceUseCase } from '@hrms/core/usecases/approve-absence.usecase'
+import type { RejectAbsenceUseCase } from '@hrms/core/usecases/reject-absence.usecase'
+import type { CancelAbsenceUseCase } from '@hrms/core/usecases/cancel-absence.usecase'
 import { AppModule } from '@hrms/core/contracts/roles'
 import { NotFoundError, ValidationError, UnauthorizedError } from '@hrms/core'
 import type { AuthenticatedUser } from '@hrms/core/contracts/auth'
@@ -37,13 +43,33 @@ function handleError(c: any, err: unknown) {
   throw err
 }
 
-export function createAbsencesController(uc: ManageAbsencesUseCase) {
+/**
+ * Builds the absences router, wiring each HTTP route to its atomic use case.
+ *
+ * @param listAbsenceTypes - use case that returns the absence-type catalogue
+ * @param listAbsenceBalances - use case that returns an employee's balances
+ * @param listAbsenceRequests - use case that queries absence requests
+ * @param requestAbsence - use case that creates a pending absence request
+ * @param approveAbsence - use case that approves a pending request
+ * @param rejectAbsence - use case that rejects a pending request
+ * @param cancelAbsence - use case that cancels a pending request
+ * @returns a Hono router protected by authentication, mounted at '/'
+ */
+export function createAbsencesController(
+  listAbsenceTypes: ListAbsenceTypesUseCase,
+  listAbsenceBalances: ListAbsenceBalancesUseCase,
+  listAbsenceRequests: ListAbsenceRequestsUseCase,
+  requestAbsence: RequestAbsenceUseCase,
+  approveAbsence: ApproveAbsenceUseCase,
+  rejectAbsence: RejectAbsenceUseCase,
+  cancelAbsence: CancelAbsenceUseCase,
+) {
   const app = new Hono()
   app.use('*', authMiddleware)
 
   // GET /absence-types — public to all authenticated
   app.get('/absence-types', async c => {
-    const types = await uc.listAbsenceTypes()
+    const types = await listAbsenceTypes.execute()
     return c.json(types)
   })
 
@@ -54,7 +80,7 @@ export function createAbsencesController(uc: ManageAbsencesUseCase) {
     async c => {
       const employeeId = c.req.param('id')
       const year = Number(c.req.query('year') ?? new Date().getFullYear())
-      const balances = await uc.listBalances(employeeId, year)
+      const balances = await listAbsenceBalances.execute(employeeId, year)
       return c.json(balances)
     }
   )
@@ -65,7 +91,7 @@ export function createAbsencesController(uc: ManageAbsencesUseCase) {
     requirePermission(AppModule.ABSENCES, 'canView'),
     async c => {
       const q = c.req.query()
-      const result = await uc.listRequests({
+      const result = await listAbsenceRequests.execute({
         employeeId: q.employee_id,
         status:     q.status as any,
         from:       q.from,
@@ -86,7 +112,7 @@ export function createAbsencesController(uc: ManageAbsencesUseCase) {
       const user = c.get('user') as AuthenticatedUser
       const body = c.req.valid('json')
       try {
-        const request = await uc.requestAbsence({ ...body, requesterId: user.id })
+        const request = await requestAbsence.execute({ ...body, requesterId: user.id })
         return c.json(request, 201)
       } catch (err) {
         return handleError(c, err)
@@ -104,7 +130,7 @@ export function createAbsencesController(uc: ManageAbsencesUseCase) {
       if (!isManager(user)) return c.json({ error: 'Forbidden' }, 403)
       const body = c.req.valid('json')
       try {
-        const request = await uc.approveAbsence(c.req.param('id'), user.id, body.notes)
+        const request = await approveAbsence.execute(c.req.param('id'), user.id, body.notes)
         return c.json(request)
       } catch (err) {
         return handleError(c, err)
@@ -122,7 +148,7 @@ export function createAbsencesController(uc: ManageAbsencesUseCase) {
       if (!isManager(user)) return c.json({ error: 'Forbidden' }, 403)
       const body = c.req.valid('json')
       try {
-        const request = await uc.rejectAbsence(c.req.param('id'), user.id, body.notes)
+        const request = await rejectAbsence.execute(c.req.param('id'), user.id, body.notes)
         return c.json(request)
       } catch (err) {
         return handleError(c, err)
@@ -137,7 +163,7 @@ export function createAbsencesController(uc: ManageAbsencesUseCase) {
     async c => {
       const user = c.get('user') as AuthenticatedUser
       try {
-        const request = await uc.cancelAbsence(c.req.param('id'), user.id)
+        const request = await cancelAbsence.execute(c.req.param('id'), user.id)
         return c.json(request)
       } catch (err) {
         return handleError(c, err)
