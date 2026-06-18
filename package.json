@@ -10,7 +10,7 @@
     "dev:api": "bun run --filter @hrms/api dev",
     "dev:ui": "bun run --filter hrms-ui dev",
     "test": "bun run --filter '@hrms/*' test",
-    "test:core": "bun run --filter @hrms/core test",
+    "test:core": "bun run --filter @hrms/core-tests test",
     "test:boundary": "bun run --filter @hrms/boundary-postgres test",
     "test:api": "bun run --filter @hrms/api test",
     "migrate": "bun run --filter @hrms/boundary-postgres migrate"

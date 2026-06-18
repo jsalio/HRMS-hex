@@ -67,6 +67,7 @@ El usuario se crea automáticamente via seed en la migración `001_auth_roles.sq
 hrms-hex/
 ├── packages/
 │   ├── core/               # Dominio, contratos, casos de uso (sin deps externas)
+│   ├── core-tests/         # Tests del core, aislados del runtime (depende de core)
 │   ├── boundary-postgres/  # Repositorios con postgres.js + migraciones
 │   └── api/                # Hono app — composition root
 ├── apps/
@@ -84,9 +85,11 @@ hrms-hex/
 apps/hrms-ui ──────────────────────────────► packages/api
                                                    │
 packages/boundary-postgres ──► packages/core ◄────┘
+                                     ▲
+packages/core-tests ─────────────────┘
 ```
 
-El núcleo (`packages/core`) no tiene dependencias externas. Las capas externas dependen de él, nunca al revés.
+El núcleo (`packages/core`) no tiene dependencias externas: ni siquiera el runtime de test (`bun:test`). Las capas externas dependen de él, nunca al revés. Los tests del core viven en `packages/core-tests`, que depende de `core` y carga el runtime de test sin contaminar el dominio.
 
 ## API — Endpoints disponibles
 
@@ -114,7 +117,7 @@ El núcleo (`packages/core`) no tiene dependencias externas. Las capas externas 
 bun test
 
 # por paquete
-bun run test:core
+bun run test:core      # → @hrms/core-tests (tests del dominio, aislados)
 bun run test:boundary
 bun run test:api
 ```

@@ -63,6 +63,13 @@
       "name": "@hrms/core",
       "version": "0.0.1",
     },
+    "packages/core-tests": {
+      "name": "@hrms/core-tests",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@hrms/core": "workspace:*",
+      },
+    },
   },
   "packages": {
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
@@ -340,6 +347,8 @@
     "@hrms/boundary-postgres": ["@hrms/boundary-postgres@workspace:packages/boundary-postgres"],
 
     "@hrms/core": ["@hrms/core@workspace:packages/core"],
+
+    "@hrms/core-tests": ["@hrms/core-tests@workspace:packages/core-tests"],
 
     "@inquirer/checkbox": ["@inquirer/checkbox@2.5.0", "", { "dependencies": { "@inquirer/core": "^9.1.0", "@inquirer/figures": "^1.0.5", "@inquirer/type": "^1.5.3", "ansi-escapes": "^4.3.2", "yoctocolors-cjs": "^2.1.2" } }, "sha512-sMgdETOfi2dUHT8r7TT1BTKOwNvdDGFDXYWtQ2J69SvlYNntk9I/gJe7r5yvMwwsuKnYbuRs3pNhx4tgNck5aA=="],
 

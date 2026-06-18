@@ -39,6 +39,7 @@ export class LoginUseCase {
     const authenticatedUser: AuthenticatedUser = {
       id: user.id,
       email: user.email,
+      employeeId: user.employeeId ?? undefined,
       role: {
         id: role.id,
         name: role.name,
