@@ -26,6 +26,7 @@ export interface RolePermission {
 export interface AuthenticatedUser {
   id: string
   email: string
+  employeeId?: string | null
   role: {
     id: string
     name: string

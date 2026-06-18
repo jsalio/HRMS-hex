@@ -65,4 +65,36 @@ export class AuthService {
   restoreSession(user: AuthenticatedUser): void {
     this._currentUser.set(user)
   }
+
+  /**
+   * Decodes the stored access token and restores the in-memory user signal.
+   * Called once at app startup via APP_INITIALIZER — no network request needed
+   * because the JWT payload already contains the full AuthenticatedUser shape.
+   * Signature verification happens on every API call via the backend middleware.
+   *
+   * @returns resolved Promise — APP_INITIALIZER requires a Promise or Observable
+   */
+  initializeSession(): Promise<void> {
+    const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+    if (!token) return Promise.resolve()
+
+    try {
+      const parts = token.split('.')
+      if (parts.length !== 3 || !parts[1]) return Promise.resolve()
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')))
+      if (payload.sub && payload.email && payload.role) {
+        this._currentUser.set({
+          id: payload.sub,
+          email: payload.email,
+          employeeId: payload.employeeId ?? null,
+          role: payload.role,
+        })
+      }
+    } catch {
+      localStorage.removeItem(ACCESS_TOKEN_KEY)
+      localStorage.removeItem(REFRESH_TOKEN_KEY)
+    }
+
+    return Promise.resolve()
+  }
 }

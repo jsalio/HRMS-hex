@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core'
-import { NgIf, NgFor, DatePipe } from '@angular/common'
+import { NgIf, NgFor, DatePipe, DecimalPipe } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { AuthService } from '../core/services/auth.service'
@@ -9,7 +9,7 @@ import { AttendanceService, AttendanceRecord, AttendanceSummary } from './attend
 @Component({
   selector: 'app-attendance-page',
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule, TranslateModule, DatePipe],
+  imports: [NgIf, NgFor, FormsModule, TranslateModule, DatePipe, DecimalPipe],
   template: `
     <div class="attendance-page">
       <div class="page-header">
