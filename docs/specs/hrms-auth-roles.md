@@ -2,6 +2,7 @@
 
 **Fecha**: 2026-06-12
 **Estado**: Implementado
+**Actualizado**: 2026-06-18 — post INC-002 (refactor a use cases atómicos, ver `docs/sdd-incident-log.md`)
 **Commit**: feat(hrms-auth-roles): implement JWT auth, roles/permissions and app shell (#1/10)
 **Sub-spec**: 1 de 10 del sistema HRMS-HEX
 
@@ -83,10 +84,12 @@ Seed: 4 roles (super_admin, hr_manager, finance, employee) + admin@hrms.com.
 interface AuthenticatedUser {
   id: string
   email: string
-  roleId: string
-  roleName: string
-  permissions: RolePermission[]
-  employeeId: string | null
+  employeeId?: string
+  role: {
+    id: string
+    name: string
+    permissions: RolePermission[]
+  }
 }
 ```
 
@@ -119,9 +122,12 @@ apps/hrms-ui         ← Angular 18 standalone
 | `packages/core/src/contracts/roles.ts` | Core | AppModule enum, RolePermission, IRoleRepository |
 | `packages/core/src/domain/role.ts` | Core | Role entity con toAuthPermissions() + invariante super_admin |
 | `packages/core/src/domain/errors.ts` | Core | DomainError, NotFoundError, ConflictError, ValidationError |
-| `packages/core/src/usecases/login.usecase.ts` | Core | LoginUseCase |
-| `packages/core/src/usecases/refresh-token.usecase.ts` | Core | RefreshTokenUseCase |
-| `packages/core/src/usecases/manage-roles.usecase.ts` | Core | ManageRolesUseCase |
+| `packages/core/src/usecases/login.usecase.ts` | Core | `LoginUseCase` — autentica, construye `AuthenticatedUser`, emite access + refresh token |
+| `packages/core/src/usecases/refresh-token.usecase.ts` | Core | `RefreshTokenUseCase` — rota refresh token (revoca anterior, emite nuevo) |
+| `packages/core/src/usecases/create-role.usecase.ts` | Core | `CreateRoleUseCase` — crea rol verificando unicidad de nombre |
+| `packages/core/src/usecases/update-role.usecase.ts` | Core | `UpdateRoleUseCase` — actualiza nombre y/o permisos; aplica invariante super_admin |
+| `packages/core/src/usecases/delete-role.usecase.ts` | Core | `DeleteRoleUseCase` — elimina rol verificando que no sea de sistema |
+| `packages/core/src/usecases/list-roles.usecase.ts` | Core | `ListRolesUseCase` — devuelve el catálogo completo de roles |
 | `packages/boundary-postgres/src/migrations/001_auth_roles.sql` | Infra | Tablas + seed |
 | `packages/boundary-postgres/src/repositories/user.repository.ts` | Infra | UserRepository |
 | `packages/boundary-postgres/src/repositories/role.repository.ts` | Infra | RoleRepository |
@@ -143,13 +149,37 @@ apps/hrms-ui         ← Angular 18 standalone
 
 Correr: `bun test`
 
-Tests del sub-spec (backend):
-- `Role.toAuthPermissions()` devuelve todo `true` para super_admin
-- `LoginUseCase` devuelve `AuthenticatedUser` completo en login válido
-- `LoginUseCase` lanza `NotFoundError` con email inexistente
-- `LoginUseCase` lanza `ValidationError` con contraseña incorrecta
-- `RefreshTokenUseCase` rota el token (revoca el anterior, emite uno nuevo)
-- `ManageRolesUseCase` previene eliminar roles de sistema
+### Tests de dominio (`packages/core-tests/src/domain/role.test.ts`)
+
+| Test | Qué verifica |
+|---|---|
+| `given_role_with_super_admin_name_when_toAuthPermissions_then_all_are_true` | Invariante super_admin — todos los permisos en true |
+| `given_non_super_admin_role_when_toAuthPermissions_then_returns_stored_permissions` | Roles normales devuelven solo sus permisos asignados |
+| `given_system_role_when_rename_then_throws_DomainError` | Roles de sistema no pueden renombrarse |
+| `given_system_role_when_assertCanDelete_then_throws_DomainError` | Roles de sistema no pueden eliminarse |
+| `given_super_admin_role_with_stored_false_permissions_when_toAuthPermissions_then_invariant_overrides_to_true` | La invariante super_admin no depende de los permisos almacenados |
+| `AppModule_enum_values_match_expected_strings` | Los 11 valores del enum coinciden con los CHECK constraints de DB |
+
+### Tests de use cases (`packages/core-tests/src/usecases/`)
+
+| Test | Use case | Qué verifica |
+|---|---|---|
+| `given_valid_credentials_when_execute_then_returns_tokens_and_user` | LoginUseCase | happy path — devuelve tokens y AuthenticatedUser |
+| `given_valid_login_when_execute_then_AuthenticatedUser_has_exact_contract_shape` | LoginUseCase | contrato congelado — estructura anidada `role.{id,name,permissions}` |
+| `given_invalid_password_when_execute_then_throws_UnauthorizedError` | LoginUseCase | contraseña incorrecta |
+| `given_unknown_email_when_execute_then_throws_UnauthorizedError` | LoginUseCase | email inexistente |
+| `given_inactive_user_when_execute_then_throws_UnauthorizedError` | LoginUseCase | usuario inactivo |
+| `given_valid_login_when_execute_then_refresh_token_is_stored` | LoginUseCase | el refresh token se persiste en DB |
+| `given_valid_refresh_token_when_execute_then_returns_new_access_token` | RefreshTokenUseCase | happy path — emite nuevo par de tokens |
+| `given_valid_refresh_token_when_execute_then_old_token_is_revoked_and_new_one_created` | RefreshTokenUseCase | rotación — revoca anterior, crea nuevo |
+| `given_expired_refresh_token_when_execute_then_throws_UnauthorizedError` | RefreshTokenUseCase | token expirado |
+| `given_revoked_refresh_token_when_execute_then_throws_UnauthorizedError` | RefreshTokenUseCase | token revocado |
+| `given_valid_role_data_when_execute_then_returns_role` | CreateRoleUseCase | happy path |
+| `given_duplicate_name_when_execute_then_throws_ConflictError` | CreateRoleUseCase | nombre duplicado |
+| `given_super_admin_role_when_execute_with_false_permissions_then_toAuthPermissions_still_all_true` | UpdateRoleUseCase | invariante super_admin sobrevive al update |
+| `given_system_role_when_execute_then_throws_DomainError` | DeleteRoleUseCase | no eliminar roles de sistema |
+| `given_custom_role_when_execute_then_deletes` | DeleteRoleUseCase | happy path |
+| `given_roles_exist_when_execute_then_returns_all_roles` | ListRolesUseCase | delegación correcta |
 
 ---
 
