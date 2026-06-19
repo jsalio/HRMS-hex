@@ -47,6 +47,11 @@ export const routes: Routes = [
         loadComponent: () => import('./attendance/attendance-page.component').then(m => m.AttendancePageComponent),
       },
       {
+        path: 'documents',
+        canActivate: [permissionGuard(AppModule.DOCUMENTS, 'canView')],
+        loadComponent: () => import('./documents/documents-page.component').then(m => m.DocumentsPageComponent),
+      },
+      {
         path: 'benefits',
         canActivate: [permissionGuard(AppModule.BENEFITS, 'canEdit')],
         loadComponent: () => import('./benefits/benefits-admin-page.component').then(m => m.BenefitsAdminPageComponent),

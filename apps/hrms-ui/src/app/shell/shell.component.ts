@@ -31,6 +31,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/documents':      'shell.nav.documents',
   '/payroll':        'shell.nav.payroll',
   '/benefits':       'shell.nav.benefits',
+  '/benefits/my':    'shell.nav.benefits',
   '/recruitment':    'shell.nav.recruitment',
   '/reports':        'shell.nav.reports',
   '/notifications':  'shell.nav.notifications',
@@ -89,7 +90,16 @@ export class ShellComponent {
   readonly userEmail = computed(() => this.auth.currentUser()?.email ?? '')
 
   readonly visibleNavItems = computed(() =>
-    ALL_NAV_ITEMS.filter(item => this.auth.hasPermission(item.module, 'canView'))
+    ALL_NAV_ITEMS
+      .filter(item => this.auth.hasPermission(item.module, 'canView'))
+      .map(item => {
+        // Employees (canView only) land on their personal benefits page;
+        // managers/admins (canEdit) land on the plan-management page.
+        if (item.module === AppModule.BENEFITS && !this.auth.hasPermission(AppModule.BENEFITS, 'canEdit')) {
+          return { ...item, path: '/benefits/my' }
+        }
+        return item
+      })
   )
 
   private readonly currentUrl = toSignal(
