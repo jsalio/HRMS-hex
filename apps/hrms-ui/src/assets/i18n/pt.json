@@ -171,7 +171,11 @@
       "generic": "Ocorreu um erro. Tente novamente."
     },
     "optional": "Opcional",
-    "cancel": "Cancelar"
+    "forbidden": {
+      "title": "Acesso negado",
+      "message": "Você não tem permissão para acessar esta seção.",
+      "go_home": "Voltar ao início"
+    }
   },
   "documents": {
     "title": "Documentos",

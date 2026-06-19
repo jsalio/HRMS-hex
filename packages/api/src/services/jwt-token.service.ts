@@ -106,7 +106,7 @@ export async function verifyJwt(token: string, secret: Uint8Array): Promise<Auth
   try {
     const { payload } = await jwtVerify(token, secret)
     if (!payload.sub || !payload.email || !payload.role) throw new UnauthorizedError()
-    return { id: payload.sub as string, email: payload.email as string, role: payload.role as AuthenticatedUser['role'] }
+    return { id: payload.sub as string, email: payload.email as string, employeeId: (payload.employeeId as string | null) ?? null, role: payload.role as AuthenticatedUser['role'] }
   } catch {
     throw new UnauthorizedError('Invalid or expired access token')
   }

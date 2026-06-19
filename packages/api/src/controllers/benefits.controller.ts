@@ -114,9 +114,9 @@ export function createBenefitsController(
       try {
         const user = c.get('user') as AuthenticatedUser
         const benefits = await getEmployeeBenefits.execute({
-          employeeId:        c.req.param('id'),
-          requestingUserId:  user.id,
-          requestingUserRole: user.role.name,
+          employeeId:           c.req.param('id'),
+          requestingEmployeeId: user.employeeId,
+          requestingUserRole:   user.role.name,
         })
         return c.json(benefits)
       } catch (err) { return handleError(c, err) }

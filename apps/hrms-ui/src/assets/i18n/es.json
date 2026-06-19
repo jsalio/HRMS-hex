@@ -171,7 +171,11 @@
       "generic": "Ocurrió un error. Intente nuevamente."
     },
     "optional": "Opcional",
-    "cancel": "Cancelar"
+    "forbidden": {
+      "title": "Acceso denegado",
+      "message": "No tienes permiso para acceder a esta sección.",
+      "go_home": "Volver al inicio"
+    }
   },
   "documents": {
     "title": "Documentos",

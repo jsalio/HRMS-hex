@@ -8,8 +8,8 @@ const MANAGER_ROLES = ['hr_manager', 'super_admin'] as const
 export interface GetEmployeeBenefitsInput {
   /** The employee whose benefits are being requested. */
   employeeId: string
-  /** The authenticated user's own identifier, used to enforce ownership. */
-  requestingUserId: string
+  /** The authenticated user's employee identifier, used to enforce ownership. */
+  requestingEmployeeId: string | null | undefined
   /** The authenticated user's role name, used to allow HR override. */
   requestingUserRole: string
 }
@@ -34,7 +34,7 @@ export class GetEmployeeBenefitsUseCase {
    * @throws {ForbiddenError} when the requester is not the target employee and lacks a manager role
    */
   async execute(input: GetEmployeeBenefitsInput): Promise<EmployeeBenefitData[]> {
-    const isOwner   = input.requestingUserId === input.employeeId
+    const isOwner   = input.requestingEmployeeId === input.employeeId
     const isManager = (MANAGER_ROLES as readonly string[]).includes(input.requestingUserRole)
     if (!isOwner && !isManager) {
       throw new ForbiddenError('Access denied: you can only view your own benefits')

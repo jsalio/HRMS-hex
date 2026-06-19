@@ -171,7 +171,11 @@
       "generic": "An error occurred. Please try again."
     },
     "optional": "Optional",
-    "cancel": "Cancel"
+    "forbidden": {
+      "title": "Access denied",
+      "message": "You do not have permission to access this section.",
+      "go_home": "Back to home"
+    }
   },
   "documents": {
     "title": "Documents",

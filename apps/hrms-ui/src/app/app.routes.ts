@@ -10,7 +10,7 @@ export const routes: Routes = [
   },
   {
     path: 'forbidden',
-    loadComponent: () => import('./auth/login/login-page.component').then(m => m.LoginPageComponent),
+    loadComponent: () => import('./shell/forbidden/forbidden-page.component').then(m => m.ForbiddenPageComponent),
   },
   {
     path: '',

@@ -21,7 +21,7 @@ import { BenefitsService, EmployeeBenefit } from './benefits.service'
       <div *ngIf="loading()" class="state-loading">
         <span class="spinner"></span>{{ 'common.loading' | translate }}
       </div>
-      <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+      <div *ngIf="error()" class="alert alert-error">{{ error()! | translate }}</div>
 
       <div *ngIf="!loading() && benefits().length === 0 && !error()" class="empty-state">
         {{ 'benefits.no_benefits' | translate }}
@@ -72,7 +72,7 @@ export class MyBenefitsPageComponent implements OnInit {
   readonly error    = signal<string | null>(null)
 
   /** @returns the authenticated employee's identifier */
-  get employeeId(): string { return this.auth.currentUser()?.id ?? '' }
+  get employeeId(): string { return this.auth.currentUser()?.employeeId ?? '' }
 
   async ngOnInit() {
     this.loading.set(true)

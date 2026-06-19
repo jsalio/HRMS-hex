@@ -5,6 +5,8 @@ import type { User } from '../domain/user'
 export interface AuthenticatedUser {
   id: string
   email: string
+  /** UUID of the linked employee record; null for non-employee users (e.g. finance, admin). */
+  employeeId?: string | null
   role: {
     id: string
     name: string
