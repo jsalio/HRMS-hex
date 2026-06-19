@@ -12,6 +12,8 @@ import {
   requestAbsenceUseCase, approveAbsenceUseCase, rejectAbsenceUseCase, cancelAbsenceUseCase,
   listAttendanceRecordsUseCase, getAttendanceSummaryUseCase, checkInUseCase,
   checkOutUseCase, editAttendanceRecordUseCase,
+  listBenefitPlansUseCase, createBenefitPlanUseCase, updateBenefitPlanUseCase,
+  getEmployeeBenefitsUseCase, enrollBenefitUseCase, unenrollBenefitUseCase,
   refreshTokenRepo, tokenSvc,
 } from './container'
 import { createAuthController } from './controllers/auth.controller'
@@ -21,6 +23,7 @@ import { createDepartmentsController } from './controllers/departments.controlle
 import { createDocumentsController } from './controllers/documents.controller'
 import { createAbsencesController } from './controllers/absences.controller'
 import { createAttendanceController } from './controllers/attendance.controller'
+import { createBenefitsController } from './controllers/benefits.controller'
 
 const app = new Hono()
 
@@ -28,17 +31,28 @@ app.use('*', logger())
 
 app.route('/auth',        createAuthController(loginUseCase, refreshTokenUseCase, refreshTokenRepo, tokenSvc))
 app.route('/roles',       createRolesController(listRolesUseCase, createRoleUseCase, updateRoleUseCase, deleteRoleUseCase))
-app.route('/employees',   createEmployeesController(
-  listEmployeesUseCase, getEmployeeUseCase, createEmployeeUseCase, updateEmployeeUseCase,
-  terminateEmployeeUseCase, getEmployeeOnboardingUseCase, updateOnboardingStepUseCase,
-))
 app.route('/departments', createDepartmentsController(listDepartmentsUseCase, createDepartmentUseCase))
 
 const docsCtrl = createDocumentsController(
   listDocumentsUseCase, getDocumentUseCase, createDocumentUseCase, signDocumentUseCase,
   archiveDocumentUseCase, renewDocumentUseCase, listExpiringDocumentsUseCase,
 )
+
+const benefitsCtrl = createBenefitsController(
+  listBenefitPlansUseCase, createBenefitPlanUseCase, updateBenefitPlanUseCase,
+  getEmployeeBenefitsUseCase, enrollBenefitUseCase, unenrollBenefitUseCase,
+)
+
+// Sub-routers scoped to /employees must be registered BEFORE the employees controller
+// because that controller applies a global requirePermission(EMPLOYEES, canView) middleware
+// that would otherwise intercept routes owned by other modules (documents, benefits).
 app.route('/employees', docsCtrl.employeeRoutes)
+app.route('/employees', benefitsCtrl.enrollmentRoutes)
+app.route('/employees', createEmployeesController(
+  listEmployeesUseCase, getEmployeeUseCase, createEmployeeUseCase, updateEmployeeUseCase,
+  terminateEmployeeUseCase, getEmployeeOnboardingUseCase, updateOnboardingStepUseCase,
+))
+
 app.route('/documents', docsCtrl.documentRoutes)
 
 const absencesCtrl = createAbsencesController(
@@ -51,6 +65,8 @@ app.route('/attendance', createAttendanceController(
   listAttendanceRecordsUseCase, getAttendanceSummaryUseCase, checkInUseCase,
   checkOutUseCase, editAttendanceRecordUseCase,
 ))
+
+app.route('/benefit-plans', benefitsCtrl.planRoutes)
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 

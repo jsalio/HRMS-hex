@@ -2,6 +2,7 @@
 
 **Fecha**: 2026-06-13
 **Estado**: Implementado
+**Actualizado**: 2026-06-18 — post INC-002 (refactor a use cases atómicos, ver `docs/sdd-incident-log.md`)
 **Sub-spec**: 3 de 10 — hrms-hex
 **Dependencia**: hrms-employees completo
 
@@ -74,9 +75,15 @@ Hexagonal — mismo que sub-specs 1 y 2. Core sin dependencias externas, Documen
 
 | Archivo | Capa | Responsabilidad |
 |---|---|---|
-| `packages/core/src/contracts/documents.ts` | dominio | Tipos DocumentStatus, DocumentType, IDocumentRepository |
-| `packages/core/src/domain/employee-document.ts` | dominio | Entidad con assertCanBeSigned / assertCanBeArchived |
-| `packages/core/src/usecases/manage-documents.usecase.ts` | aplicación | list, get, create, sign, archive, renew, listExpiring |
+| `packages/core/src/contracts/documents.ts` | dominio | Tipos `DocumentStatus`, `DocumentType`; contratos atómicos por operación; puerto completo `IDocumentRepository` |
+| `packages/core/src/domain/employee-document.ts` | dominio | Entidad `EmployeeDocument` con `assertCanBeSigned` / `assertCanBeArchived` |
+| `packages/core/src/usecases/create-document.usecase.ts` | aplicación | `CreateDocumentUseCase` — crea documento PENDING validando empleado activo |
+| `packages/core/src/usecases/get-document.usecase.ts` | aplicación | `GetDocumentUseCase` — carga detalle por id |
+| `packages/core/src/usecases/list-documents.usecase.ts` | aplicación | `ListDocumentsUseCase` — lista documentos de un empleado con filtros |
+| `packages/core/src/usecases/list-expiring-documents.usecase.ts` | aplicación | `ListExpiringDocumentsUseCase` — documentos que vencen en los próximos N días |
+| `packages/core/src/usecases/sign-document.usecase.ts` | aplicación | `SignDocumentUseCase` — PENDING → SIGNED con hash de integridad |
+| `packages/core/src/usecases/archive-document.usecase.ts` | aplicación | `ArchiveDocumentUseCase` — SIGNED → ARCHIVED |
+| `packages/core/src/usecases/renew-document.usecase.ts` | aplicación | `RenewDocumentUseCase` — crea nuevo PENDING con `renewed_from_id` |
 | `packages/boundary-postgres/src/migrations/003_documents.sql` | infra | Tablas document_templates + employee_documents |
 | `packages/boundary-postgres/src/repositories/document.repository.ts` | infra | Implementación IDocumentRepository con postgres.js |
 | `packages/api/src/controllers/documents.controller.ts` | presentación | employeeRoutes + documentRoutes (dual-prefix) |
@@ -111,7 +118,7 @@ Hexagonal — mismo que sub-specs 1 y 2. Core sin dependencias externas, Documen
 
 ## Decisiones tomadas y por qué
 
-**ManageDocumentsUseCase unificado**: El spec sugería use cases separados. Se consolida para seguir el patrón de `ManageEmployeesUseCase` y centralizar la dependencia de `IEmployeeRepository` (necesaria para validar empleado activo al crear).
+**Use cases atómicos (post INC-002)**: La implementación original agrupaba toda la lógica en `ManageDocumentsUseCase`. Refactorizado a 7 use cases atómicos siguiendo SRP. Formalizado en ADR-0001. La dependencia de `IEmployeeRepository` (para validar empleado activo) es exclusiva de `CreateDocumentUseCase` — los demás use cases no la necesitan.
 
 **Controlador con dual Hono instance**: Las rutas abarcan dos prefijos URL. Exportar `{ employeeRoutes, documentRoutes }` y montarlos por separado preserva la separación de concerns sin modificar controladores existentes.
 
@@ -143,5 +150,4 @@ Hexagonal — mismo que sub-specs 1 y 2. Core sin dependencias externas, Documen
 
 | Qué cambió | Motivo | Impacto |
 |---|---|---|
-| Use cases consolidados en ManageDocumentsUseCase (vs sign-document + renew-document separados) | Patrón establecido en sub-spec 2 | bajo |
-| DocumentsPageComponent único en lugar de múltiples componentes | Simplifica árbol de componentes | bajo |
+| `DocumentsPageComponent` único en lugar de múltiples componentes | Simplifica árbol de componentes | bajo |

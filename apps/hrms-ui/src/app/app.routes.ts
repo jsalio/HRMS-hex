@@ -10,7 +10,7 @@ export const routes: Routes = [
   },
   {
     path: 'forbidden',
-    loadComponent: () => import('./auth/login/login-page.component').then(m => m.LoginPageComponent),
+    loadComponent: () => import('./shell/forbidden/forbidden-page.component').then(m => m.ForbiddenPageComponent),
   },
   {
     path: '',
@@ -45,6 +45,21 @@ export const routes: Routes = [
         path: 'attendance',
         canActivate: [permissionGuard(AppModule.ATTENDANCE, 'canView')],
         loadComponent: () => import('./attendance/attendance-page.component').then(m => m.AttendancePageComponent),
+      },
+      {
+        path: 'documents',
+        canActivate: [permissionGuard(AppModule.DOCUMENTS, 'canView')],
+        loadComponent: () => import('./documents/documents-page.component').then(m => m.DocumentsPageComponent),
+      },
+      {
+        path: 'benefits',
+        canActivate: [permissionGuard(AppModule.BENEFITS, 'canEdit')],
+        loadComponent: () => import('./benefits/benefits-admin-page.component').then(m => m.BenefitsAdminPageComponent),
+      },
+      {
+        path: 'benefits/my',
+        canActivate: [permissionGuard(AppModule.BENEFITS, 'canView')],
+        loadComponent: () => import('./benefits/my-benefits-page.component').then(m => m.MyBenefitsPageComponent),
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],

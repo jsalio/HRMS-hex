@@ -171,7 +171,11 @@
       "generic": "An error occurred. Please try again."
     },
     "optional": "Optional",
-    "cancel": "Cancel"
+    "forbidden": {
+      "title": "Access denied",
+      "message": "You do not have permission to access this section.",
+      "go_home": "Back to home"
+    }
   },
   "documents": {
     "title": "Documents",
@@ -325,6 +329,51 @@
       "check_in_failed": "Error recording check-in",
       "check_out_failed": "Error recording check-out",
       "edit_failed": "Error editing record"
+    }
+  },
+  "benefits": {
+    "my_benefits": "My benefits",
+    "admin_title": "Benefits management",
+    "new_plan": "New plan",
+    "enroll": "Enroll",
+    "enroll_title": "Enroll employee",
+    "deactivate": "Deactivate",
+    "no_benefits": "You have no active benefits",
+    "no_plans": "No benefit plans registered",
+    "table": {
+      "plan": "Plan",
+      "type": "Type",
+      "provider": "Provider",
+      "cost": "Cost",
+      "status": "Status",
+      "enrolled_at": "Enrollment date",
+      "actions": "Actions"
+    },
+    "types": {
+      "health": "Health",
+      "life_insurance": "Life insurance",
+      "dental": "Dental",
+      "vision": "Vision",
+      "pension": "Pension",
+      "other": "Other"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "fields": {
+      "name": "Plan name",
+      "type": "Type",
+      "select_type": "Select a type",
+      "provider": "Provider",
+      "employee_id": "Employee ID",
+      "enrolled_at": "Start date"
+    },
+    "error": {
+      "load": "Error loading benefits",
+      "create": "Error creating plan",
+      "update": "Error updating plan",
+      "enroll": "Error enrolling employee"
     }
   }
 }

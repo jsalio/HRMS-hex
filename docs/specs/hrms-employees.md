@@ -2,6 +2,7 @@
 
 **Fecha**: 2026-06-13
 **Estado**: Implementado
+**Actualizado**: 2026-06-18 — post INC-002 (refactor a use cases atómicos, ver `docs/sdd-incident-log.md`)
 **Commit**: feat(hrms-employees): implement employee management — CRUD, departments, onboarding, Angular UI
 **Sub-spec**: 2 de 10 del sistema HRMS-HEX
 
@@ -96,11 +97,18 @@ Hexagonal idéntico al establecido en `hrms-auth-roles`: Core (contratos + domin
 
 | Archivo | Capa | Responsabilidad |
 |---|---|---|
-| `packages/core/src/contracts/employees.ts` | Core/Contratos | Tipos, interfaces IEmployeeRepository, IDepartmentRepository |
-| `packages/core/src/domain/employee.ts` | Core/Dominio | Entidad Employee con assertCanBeModified/assertCanBeTerminated |
-| `packages/core/src/domain/errors.ts` | Core/Dominio | + ValidationError (nuevo tipo de error) |
-| `packages/core/src/usecases/manage-employees.usecase.ts` | Core/UseCases | createEmployee, updateEmployee, terminateEmployee |
-| `packages/core/src/usecases/manage-departments.usecase.ts` | Core/UseCases | createDepartment, listDepartments |
+| `packages/core/src/contracts/employees.ts` | Core/Contratos | Tipos, contratos atómicos por operación, puertos completos `IEmployeeRepository` e `IDepartmentRepository` |
+| `packages/core/src/domain/employee.ts` | Core/Dominio | Entidad `Employee` con `assertCanBeModified` / `assertCanBeTerminated` |
+| `packages/core/src/domain/errors.ts` | Core/Dominio | + `ValidationError` (nuevo tipo de error) |
+| `packages/core/src/usecases/create-employee.usecase.ts` | Core/UseCases | `CreateEmployeeUseCase` — crea empleado + onboarding + cuenta de usuario |
+| `packages/core/src/usecases/update-employee.usecase.ts` | Core/UseCases | `UpdateEmployeeUseCase` — actualiza atributos validando estado y departamento |
+| `packages/core/src/usecases/terminate-employee.usecase.ts` | Core/UseCases | `TerminateEmployeeUseCase` — da de baja y desactiva cuenta + tokens |
+| `packages/core/src/usecases/get-employee.usecase.ts` | Core/UseCases | `GetEmployeeUseCase` — carga detalle completo por id |
+| `packages/core/src/usecases/list-employees.usecase.ts` | Core/UseCases | `ListEmployeesUseCase` — listado paginado con filtros |
+| `packages/core/src/usecases/get-employee-onboarding.usecase.ts` | Core/UseCases | `GetEmployeeOnboardingUseCase` — carga los 5 pasos de onboarding |
+| `packages/core/src/usecases/update-onboarding-step.usecase.ts` | Core/UseCases | `UpdateOnboardingStepUseCase` — marca/desmarca un paso de onboarding |
+| `packages/core/src/usecases/create-department.usecase.ts` | Core/UseCases | `CreateDepartmentUseCase` — crea departamento verificando unicidad |
+| `packages/core/src/usecases/list-departments.usecase.ts` | Core/UseCases | `ListDepartmentsUseCase` — devuelve el catálogo completo |
 | `packages/boundary-postgres/src/migrations/002_employees.sql` | Infra/DB | Tablas departments, employees, employee_onboarding + seed |
 | `packages/boundary-postgres/src/migrate.ts` | Infra/DB | Fix: ahora descubre y ordena todos los .sql dinámicamente |
 | `packages/boundary-postgres/src/repositories/employee.repository.ts` | Infra/Repo | Implementación IEmployeeRepository |
@@ -124,37 +132,42 @@ Hexagonal idéntico al establecido en `hrms-auth-roles`: Core (contratos + domin
 
 ## Cómo se verifica
 
-### Tests de backend
+### Tests de dominio (`packages/core-tests/src/domain/employee.test.ts`)
 
-| Test | Capa | Qué verifica |
+| Test | Qué verifica |
+|---|---|
+| `active employee can be modified` | `assertCanBeModified` no lanza en ACTIVE |
+| `remote employee can be modified` | `assertCanBeModified` no lanza en REMOTE |
+| `on_leave employee can be modified` | `assertCanBeModified` no lanza en ON_LEAVE |
+| `inactive employee throws ValidationError` | `assertCanBeModified` lanza en INACTIVE |
+| `inactive employee error message describes the constraint` | mensaje exacto del error |
+| `active employee can be terminated` | `assertCanBeTerminated` no lanza en ACTIVE |
+| `already inactive employee throws ValidationError` | `assertCanBeTerminated` lanza en INACTIVE |
+| `already inactive employee error message describes the constraint` | mensaje exacto del error |
+
+### Tests de use cases (`packages/core-tests/src/usecases/`)
+
+| Test | Use case | Qué verifica |
 |---|---|---|
-| `active employee can be modified` | dominio | assertCanBeModified no lanza en ACTIVE |
-| `remote employee can be modified` | dominio | assertCanBeModified no lanza en REMOTE |
-| `on_leave employee can be modified` | dominio | assertCanBeModified no lanza en ON_LEAVE |
-| `inactive employee throws ValidationError` | dominio | assertCanBeModified lanza en INACTIVE |
-| `inactive employee error message describes the constraint` | dominio | mensaje exacto del error |
-| `active employee can be terminated` | dominio | assertCanBeTerminated no lanza en ACTIVE |
-| `already inactive employee throws ValidationError` | dominio | assertCanBeTerminated lanza en INACTIVE |
-| `already inactive employee error message` | dominio | mensaje exacto |
-| `creates employee and returns detail with 5 onboarding steps` | usecase | happy path create |
-| `also creates an associated user account` | usecase | side effect: userRepo.create llamado |
-| `throws NotFoundError when department does not exist` | usecase | 404 dept |
-| `throws ConflictError when corporate email already in use` | usecase | 409 email |
-| `throws ConflictError when document_id already in use` | usecase | 409 docId |
-| `throws ValidationError when employee is INACTIVE (update)` | usecase | 422 inactive |
-| `returns employee with INACTIVE status (terminate)` | usecase | terminate llama repo.terminate |
-| `deactivates associated user account` | usecase | userRepo.deactivate + revokeAllForUser |
-| `throws ValidationError when employee is already INACTIVE (terminate)` | usecase | 422 double terminate |
+| `creates employee and returns detail with 5 onboarding steps` | CreateEmployeeUseCase | happy path |
+| `also creates an associated user account` | CreateEmployeeUseCase | side effect: `userRepo.create` llamado |
+| `throws NotFoundError when department does not exist` | CreateEmployeeUseCase | 404 dept |
+| `throws ConflictError when corporate email already in use` | CreateEmployeeUseCase | 409 email |
+| `throws ConflictError when document_id already in use` | CreateEmployeeUseCase | 409 docId |
+| `throws ValidationError when employee is INACTIVE` | UpdateEmployeeUseCase | empleado inactivo no modificable |
+| `returns employee with INACTIVE status` | TerminateEmployeeUseCase | `repo.terminate` llamado |
+| `deactivates associated user account` | TerminateEmployeeUseCase | `userRepo.deactivate` + `revokeAllForUser` |
+| `throws ValidationError when employee is already INACTIVE` | TerminateEmployeeUseCase | doble baja |
 
-Total: 17 tests, todos passing.
+> **Cobertura parcial**: `GetEmployeeUseCase`, `ListEmployeesUseCase` y `GetEmployeeOnboardingUseCase` no tienen tests unitarios — sus contratos se cubren vía tests de integración HTTP.
 
 ---
 
 ## Decisiones tomadas y por qué
 
-### ManageEmployeesUseCase consolida 3 casos de uso del spec
+### Use cases atómicos (post INC-002)
 
-El spec original definía `CreateEmployeeUseCase`, `TerminateEmployeeUseCase`, y `UpdateOnboardingUseCase` como archivos separados. Se consolidaron en un único `ManageEmployeesUseCase` por la misma razón que en hrms-auth-roles: los casos de uso del mismo dominio comparten dependencias (employeeRepo, deptRepo, userRepo) y la separación solo agregaría archivos sin valor. El nombre del archivo en el spec se documenta como desviación.
+La implementación original agrupaba toda la lógica en `ManageEmployeesUseCase` y `ManageDepartmentsUseCase`. Refactorizado a 9 use cases atómicos siguiendo SRP. Formalizado en ADR-0001. Cada use case depende solo del contrato mínimo que necesita, lo que permite testarlo con mocks minimales.
 
 ### migrate.ts hardcodeado a 001
 
@@ -192,6 +205,5 @@ La query de listado usa la ventana `COUNT(*) OVER()` para obtener el total en un
 
 | Qué cambió | Motivo | Impacto |
 |---|---|---|
-| 3 usecases → 1 ManageEmployeesUseCase | Mismas dependencias, no hay valor en archivos separados | bajo — nombre de archivo distinto al spec |
 | migrate.ts corregido (no estaba en spec) | Bug encontrado durante implementación | positivo |
 | ValidationError agregado a errors.ts | Necesario para 422 vs 409 | bajo — adición aditiva |

@@ -99,6 +99,7 @@ CROSS JOIN (VALUES
   ('attendance',    true,  true,  false, false, false),
   ('absences',      true,  true,  false, false, false),
   ('documents',     true,  false, false, false, false),
+  ('benefits',      true,  false, false, false, false),
   ('notifications', true,  false, false, false, false)
 ) AS m(module, can_view, can_create, can_edit, can_delete, can_export)
 WHERE r.name = 'employee'
