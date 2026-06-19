@@ -17,6 +17,10 @@ export type {
   IDocumentRepository,
 } from './documents'
 export type {
+  BenefitPlanType, BenefitPlanData, EmployeeBenefitData,
+  CreateBenefitPlanInput, IBenefitRepository,
+} from './benefits'
+export type {
   EmployeeStatus, OnboardingStepName, Department,
   EmployeeSummary, EmployeeOnboarding, EmployeeDetail,
   EmployeeListQuery, EmployeeListResult,

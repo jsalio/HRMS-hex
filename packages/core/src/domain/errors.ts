@@ -65,3 +65,17 @@ export class ValidationError extends DomainError {
     this.name = 'ValidationError'
   }
 }
+
+/**
+ * Raised when an authenticated actor attempts an operation on a resource they
+ * are not allowed to access, such as viewing another employee's private data.
+ */
+export class ForbiddenError extends DomainError {
+  /**
+   * @param message - human-readable reason access was denied
+   */
+  constructor(message = 'Forbidden') {
+    super(message)
+    this.name = 'ForbiddenError'
+  }
+}

@@ -326,5 +326,50 @@
       "check_out_failed": "Erro ao registrar saída",
       "edit_failed": "Erro ao editar registro"
     }
+  },
+  "benefits": {
+    "my_benefits": "Meus benefícios",
+    "admin_title": "Gestão de benefícios",
+    "new_plan": "Novo plano",
+    "enroll": "Inscrever",
+    "enroll_title": "Inscrever funcionário",
+    "deactivate": "Desativar",
+    "no_benefits": "Você não tem benefícios ativos",
+    "no_plans": "Nenhum plano de benefícios cadastrado",
+    "table": {
+      "plan": "Plano",
+      "type": "Tipo",
+      "provider": "Fornecedor",
+      "cost": "Custo",
+      "status": "Status",
+      "enrolled_at": "Data de inscrição",
+      "actions": "Ações"
+    },
+    "types": {
+      "health": "Saúde",
+      "life_insurance": "Seguro de vida",
+      "dental": "Odontológico",
+      "vision": "Visão",
+      "pension": "Previdência",
+      "other": "Outro"
+    },
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "fields": {
+      "name": "Nome do plano",
+      "type": "Tipo",
+      "select_type": "Selecione um tipo",
+      "provider": "Fornecedor",
+      "employee_id": "ID do funcionário",
+      "enrolled_at": "Data de início"
+    },
+    "error": {
+      "load": "Erro ao carregar benefícios",
+      "create": "Erro ao criar plano",
+      "update": "Erro ao atualizar plano",
+      "enroll": "Erro ao inscrever funcionário"
+    }
   }
 }

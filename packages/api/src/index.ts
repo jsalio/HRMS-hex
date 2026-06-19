@@ -12,6 +12,8 @@ import {
   requestAbsenceUseCase, approveAbsenceUseCase, rejectAbsenceUseCase, cancelAbsenceUseCase,
   listAttendanceRecordsUseCase, getAttendanceSummaryUseCase, checkInUseCase,
   checkOutUseCase, editAttendanceRecordUseCase,
+  listBenefitPlansUseCase, createBenefitPlanUseCase, updateBenefitPlanUseCase,
+  getEmployeeBenefitsUseCase, enrollBenefitUseCase, unenrollBenefitUseCase,
   refreshTokenRepo, tokenSvc,
 } from './container'
 import { createAuthController } from './controllers/auth.controller'
@@ -21,6 +23,7 @@ import { createDepartmentsController } from './controllers/departments.controlle
 import { createDocumentsController } from './controllers/documents.controller'
 import { createAbsencesController } from './controllers/absences.controller'
 import { createAttendanceController } from './controllers/attendance.controller'
+import { createBenefitsController } from './controllers/benefits.controller'
 
 const app = new Hono()
 
@@ -51,6 +54,13 @@ app.route('/attendance', createAttendanceController(
   listAttendanceRecordsUseCase, getAttendanceSummaryUseCase, checkInUseCase,
   checkOutUseCase, editAttendanceRecordUseCase,
 ))
+
+const benefitsCtrl = createBenefitsController(
+  listBenefitPlansUseCase, createBenefitPlanUseCase, updateBenefitPlanUseCase,
+  getEmployeeBenefitsUseCase, enrollBenefitUseCase, unenrollBenefitUseCase,
+)
+app.route('/benefit-plans', benefitsCtrl.planRoutes)
+app.route('/employees',     benefitsCtrl.enrollmentRoutes)
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 

@@ -40,24 +40,48 @@ CREATE TABLE employee_benefits (
 
 ## Contratos de API
 
-**GET /benefit-plans** — `Response 200: BenefitPlan[]`
+**GET /benefit-plans**
+```
+Response 200: BenefitPlan[]
+Requiere: can_view en 'benefits'
+```
 
-**POST /benefit-plans** — Body: `{name, type, description?, provider?, cost?}` → `201 BenefitPlan`
+**POST /benefit-plans**
+```
+Body: { name, type, description?, provider?, cost? }
+Response 201: BenefitPlan
+Requiere: can_create en 'benefits' (hr_manager/super_admin)
+Errores: 409 nombre duplicado | 422 type inválido
+```
 
-**PATCH /benefit-plans/:id** — Body: partial → `200 BenefitPlan`
+**PATCH /benefit-plans/:id**
+```
+Body: Partial<{ name, type, description, provider, cost, is_active }>
+Response 200: BenefitPlan
+Requiere: can_edit en 'benefits' (hr_manager/super_admin)
+Errores: 404 plan no encontrado | 422 type inválido
+```
 
-**GET /employees/:id/benefits** — `Response 200: EmployeeBenefit[]` (con plan info)
+**GET /employees/:id/benefits**
+```
+Response 200: EmployeeBenefit[] (con plan info)
+Requiere: can_view en 'benefits'
+Restricción: el usuario autenticado debe ser el propietario (employeeId === :id)
+            O tener rol hr_manager / super_admin
+```
 
 **POST /employees/:id/benefits**
 ```
 Body: { plan_id, enrolled_at }
 Response 201: EmployeeBenefit
+Requiere: can_create en 'benefits' (hr_manager/super_admin)
 Errores: 409 ya inscrito y activo | 422 plan inactivo
 ```
 
 **DELETE /employees/:id/benefits/:planId**
 ```
 Response 200: EmployeeBenefit (unenrolled_at = today)
+Requiere: can_edit en 'benefits' (hr_manager/super_admin)
 Errores: 404 no inscrito
 ```
 
@@ -84,6 +108,9 @@ BENEFITS_EMPLOYEE: mis beneficios activos (solo lectura)
 | 1 | No se puede inscribir a un empleado en un plan inactivo |
 | 2 | No se puede inscribir dos veces al mismo empleado en el mismo plan activo |
 | 3 | Empleado INACTIVE puede ver sus beneficios históricos (solo lectura) |
+| 4 | Un empleado autenticado solo puede ver sus propios beneficios; hr_manager/super_admin ven todos |
+| 5 | Solo usuarios con can_edit en 'benefits' pueden dar de baja a un empleado de un plan |
+| 6 | El campo `type` de benefit_plans se valida en dominio antes de llegar a DB (enum: health, life_insurance, dental, vision, pension, other) |
 
 ---
 

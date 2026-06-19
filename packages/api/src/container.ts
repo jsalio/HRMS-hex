@@ -2,7 +2,7 @@ import { sql } from '@hrms/boundary-postgres'
 import {
   UserRepository, RoleRepository, RefreshTokenRepository,
   EmployeeRepository, DepartmentRepository, DocumentRepository,
-  AbsenceRepository, AttendanceRepository,
+  AbsenceRepository, AttendanceRepository, BenefitRepository,
 } from '@hrms/boundary-postgres'
 import {
   LoginUseCase, RefreshTokenUseCase,
@@ -16,6 +16,8 @@ import {
   RequestAbsenceUseCase, ApproveAbsenceUseCase, RejectAbsenceUseCase, CancelAbsenceUseCase,
   ListAttendanceRecordsUseCase, GetAttendanceSummaryUseCase, CheckInUseCase,
   CheckOutUseCase, EditAttendanceRecordUseCase,
+  ListBenefitPlansUseCase, CreateBenefitPlanUseCase, UpdateBenefitPlanUseCase,
+  GetEmployeeBenefitsUseCase, EnrollBenefitUseCase, UnenrollBenefitUseCase,
 } from '@hrms/core'
 import { JwtTokenService } from './services/jwt-token.service'
 import { BunPasswordService } from './services/bun-password.service'
@@ -32,6 +34,7 @@ const deptRepo         = new DepartmentRepository(sql)
 const documentRepo     = new DocumentRepository(sql)
 const absenceRepo      = new AbsenceRepository(sql)
 const attendanceRepo   = new AttendanceRepository(sql)
+const benefitRepo      = new BenefitRepository(sql)
 
 // Services
 const tokenSvc    = new JwtTokenService(jwtSecret)
@@ -82,6 +85,14 @@ export const getAttendanceSummaryUseCase  = new GetAttendanceSummaryUseCase(atte
 export const checkInUseCase               = new CheckInUseCase(attendanceRepo, employeeRepo)
 export const checkOutUseCase              = new CheckOutUseCase(attendanceRepo)
 export const editAttendanceRecordUseCase  = new EditAttendanceRecordUseCase(attendanceRepo)
+
+// Use cases — benefits
+export const listBenefitPlansUseCase    = new ListBenefitPlansUseCase(benefitRepo)
+export const createBenefitPlanUseCase   = new CreateBenefitPlanUseCase(benefitRepo)
+export const updateBenefitPlanUseCase   = new UpdateBenefitPlanUseCase(benefitRepo)
+export const getEmployeeBenefitsUseCase = new GetEmployeeBenefitsUseCase(benefitRepo)
+export const enrollBenefitUseCase       = new EnrollBenefitUseCase(benefitRepo)
+export const unenrollBenefitUseCase     = new UnenrollBenefitUseCase(benefitRepo)
 
 // Expose repos needed by controllers
 export { refreshTokenRepo, tokenSvc }

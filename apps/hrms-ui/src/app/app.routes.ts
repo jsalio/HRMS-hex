@@ -46,6 +46,16 @@ export const routes: Routes = [
         canActivate: [permissionGuard(AppModule.ATTENDANCE, 'canView')],
         loadComponent: () => import('./attendance/attendance-page.component').then(m => m.AttendancePageComponent),
       },
+      {
+        path: 'benefits',
+        canActivate: [permissionGuard(AppModule.BENEFITS, 'canEdit')],
+        loadComponent: () => import('./benefits/benefits-admin-page.component').then(m => m.BenefitsAdminPageComponent),
+      },
+      {
+        path: 'benefits/my',
+        canActivate: [permissionGuard(AppModule.BENEFITS, 'canView')],
+        loadComponent: () => import('./benefits/my-benefits-page.component').then(m => m.MyBenefitsPageComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
