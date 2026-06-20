@@ -66,6 +66,11 @@ export const routes: Routes = [
         canActivate: [permissionGuard(AppModule.RECRUITMENT, 'canView')],
         loadChildren: () => import('./recruitment/recruitment.routes').then(m => m.RECRUITMENT_ROUTES),
       },
+      {
+        path: 'departments',
+        canActivate: [permissionGuard(AppModule.EMPLOYEES, 'canView')],
+        loadChildren: () => import('./departments/departments.routes').then(m => m.DEPARTMENTS_ROUTES),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

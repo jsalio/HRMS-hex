@@ -10,7 +10,7 @@ import {
   ListRolesUseCase, CreateRoleUseCase, UpdateRoleUseCase, DeleteRoleUseCase,
   ListEmployeesUseCase, GetEmployeeUseCase, CreateEmployeeUseCase, UpdateEmployeeUseCase,
   TerminateEmployeeUseCase, GetEmployeeOnboardingUseCase, UpdateOnboardingStepUseCase,
-  ListDepartmentsUseCase, CreateDepartmentUseCase,
+  ListDepartmentsUseCase, CreateDepartmentUseCase, UpdateDepartmentUseCase, DeleteDepartmentUseCase,
   ListDocumentsUseCase, GetDocumentUseCase, CreateDocumentUseCase, SignDocumentUseCase,
   ArchiveDocumentUseCase, RenewDocumentUseCase, ListExpiringDocumentsUseCase,
   ListAbsenceTypesUseCase, ListAbsenceBalancesUseCase, ListAbsenceRequestsUseCase,
@@ -63,8 +63,10 @@ export const getEmployeeOnboardingUseCase = new GetEmployeeOnboardingUseCase(emp
 export const updateOnboardingStepUseCase = new UpdateOnboardingStepUseCase(employeeRepo)
 
 // Use cases — departments
-export const listDepartmentsUseCase  = new ListDepartmentsUseCase(deptRepo)
-export const createDepartmentUseCase = new CreateDepartmentUseCase(deptRepo)
+export const listDepartmentsUseCase   = new ListDepartmentsUseCase(deptRepo)
+export const createDepartmentUseCase  = new CreateDepartmentUseCase(deptRepo)
+export const updateDepartmentUseCase  = new UpdateDepartmentUseCase(deptRepo)
+export const deleteDepartmentUseCase  = new DeleteDepartmentUseCase(deptRepo)
 
 // Use cases — documents
 export const listDocumentsUseCase         = new ListDocumentsUseCase(documentRepo)

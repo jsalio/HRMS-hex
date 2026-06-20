@@ -40,7 +40,8 @@
       "recruitment": "Recrutamento",
       "reports": "Relatórios",
       "notifications": "Notificações",
-      "settings": "Configurações"
+      "settings": "Configurações",
+      "departments": "Departamentos"
     }
   },
   "roles": {
@@ -458,6 +459,32 @@
       "load": "Erro ao carregar dados",
       "advance": "Erro ao avançar candidato",
       "reject": "Erro ao rejeitar candidato"
+    }
+  },
+  "departments": {
+    "title": "Departamentos",
+    "subtitle": "Gerencie os departamentos da empresa",
+    "new_department": "Novo departamento",
+    "empty": "Nenhum departamento encontrado",
+    "confirm_delete": "Excluir departamento \"{{name}}\"? Esta ação não pode ser desfeita.",
+    "delete_blocked": "Não é possível excluir o departamento pois possui funcionários ativos vinculados.",
+    "table": {
+      "name": "Nome",
+      "created_at": "Criado em",
+      "actions": "Ações"
+    },
+    "form": {
+      "name": "Nome do departamento",
+      "save": "Salvar",
+      "cancel": "Cancelar"
+    },
+    "error": {
+      "load": "Erro ao carregar departamentos",
+      "create": "Erro ao criar departamento",
+      "update": "Erro ao atualizar departamento",
+      "delete": "Erro ao excluir departamento",
+      "required": "O nome é obrigatório",
+      "conflict": "Já existe um departamento com esse nome"
     }
   }
 }

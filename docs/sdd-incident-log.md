@@ -190,6 +190,48 @@ El `why.md` documentó la decisión como "formulario de hire usa inputs de texto
 
 ---
 
+## INC-005 — Gestión de departamentos ausente como prerrequisito bloqueante
+
+**Severidad**: Alta
+**Módulo afectado**: hrms-employees (sub-spec de empleados), todas las pantallas que requieren seleccionar departamento
+**Detectado por**: Usuario — sesión 2026-06-20
+
+### Qué se violó
+
+La creación de empleados requiere un `departmentId` válido. El formulario de empleado y el formulario de contratación (`hire-form-page.component.ts`) solicitan un UUID de departamento, pero el sistema no disponía de ninguna UI que permitiera:
+
+1. Ver qué departamentos existen
+2. Crear nuevos departamentos
+3. Modificar el nombre de un departamento
+4. Eliminar departamentos con reglas de negocio
+
+Los departamentos eran de facto datos estáticos cargados por un seed SQL (`002_employees.sql`): Engineering, Finance, HR, Operations, Sales. El usuario no tenía forma de adaptar esta estructura sin acceso directo a la base de datos.
+
+### En qué fase ocurrió
+
+En el **análisis de prerequisites del sub-spec de empleados** — antes de implementar la creación de empleados. El pipeline debió haber detectado que `CreateEmployeeInput.departmentId` requería una UI de origen de datos gestionable.
+
+### Brecha de contexto
+
+El spec de empleados (`hrms-employees.md`) define `departmentId` como un campo requerido. El pipeline `/impact` debió haber trazado la cadena: *empleado requiere departamento → departamento es FK → los datos estáticos de seed son un parche temporal, no gestión real*.
+
+El pipeline confió en que el seed inicial era suficiente. No identificó que la ausencia de una UI de gestión convierte los departamentos en datos de solo lectura en producción.
+
+### Por qué no se emitió advertencia
+
+El análisis de `/impact` evaluó los side-effects de la creación de empleados pero no auditó si los datos de referencia que el feature requería (departamentos) eran gestionables por el usuario del sistema. La auditoría de datos de referencia no está como paso explícito en ningún skill del pipeline.
+
+### Resolución — RESUELTO (2026-06-20)
+
+Feature completo implementado vía `/sdd-dev`:
+- Use cases: `UpdateDepartmentUseCase`, `DeleteDepartmentUseCase` (nuevos)
+- Repositorio: `DepartmentRepository` extendido con `update`, `delete`, `countActiveEmployees`
+- API: `PUT /departments/:id` y `DELETE /departments/:id` con validación y auth
+- UI: Módulo Angular `departments/` con lista, formulario inline, eliminación con confirmación
+- Constraint de borrado: `countActiveEmployees` > 0 → error `DepartmentNotEmptyError` (409)
+
+---
+
 ## Estado del log
 
 | ID | Estado | Resolución |
@@ -198,6 +240,7 @@ El `why.md` documentó la decisión como "formulario de hire usa inputs de texto
 | INC-002 | **Resuelto** | Refactor completo a use cases atómicos + composición de contratos en los 6 módulos. Formalizado en ADR-0001 |
 | INC-003 | **Resuelto** | `JobPostingFormPageComponent` creado; ruta `new` y navegación desde `RecruitmentPageComponent` implementadas |
 | INC-004 | **Resuelto** | `| translate` añadido a todos los bindings de error en los 5 componentes del módulo recruitment |
+| INC-005 | **Resuelto** | Módulo de gestión de departamentos implementado completo (CRUD + constraint de borrado por empleados activos) |
 | — | Sistémica resuelta | Skill `/sdd-preflight` creado — enforcea CHECK-1 (docs) y CHECK-2 (SRP) antes de cada implementación. ADR-0001 fija el principio como norma del proyecto |
 
 ---
