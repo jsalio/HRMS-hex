@@ -74,4 +74,49 @@ export class DepartmentRepository implements IDepartmentRepository {
     if (!row) throw new Error('Department creation failed')
     return toDept(row)
   }
+
+  /**
+   * Updates the name of the given department.
+   *
+   * @param id - identifier of the department to update
+   * @param name - new name for the department
+   * @returns the updated department
+   * @throws {Error} when the update affects no row
+   */
+  async update(id: string, name: string): Promise<Department> {
+    const [row] = await this.sql<DeptRow[]>`
+      UPDATE departments SET name = ${name}
+      WHERE id = ${id}
+      RETURNING id, name, created_at
+    `
+    if (!row) throw new Error(`Department "${id}" not found`)
+    return toDept(row)
+  }
+
+  /**
+   * Removes the department with the given identifier.
+   *
+   * @param id - identifier of the department to delete
+   */
+  async delete(id: string): Promise<void> {
+    await this.sql`DELETE FROM departments WHERE id = ${id}`
+  }
+
+  /**
+   * Counts the employees assigned to a department whose status is active,
+   * meaning they have status ACTIVE, REMOTE, or ON_LEAVE.
+   * Employees with status INACTIVE are excluded.
+   *
+   * @param departmentId - identifier of the department to check
+   * @returns the number of active employees in the department
+   */
+  async countActiveEmployees(departmentId: string): Promise<number> {
+    const [row] = await this.sql<[{ count: string }]>`
+      SELECT COUNT(*) AS count
+      FROM employees
+      WHERE department_id = ${departmentId}
+        AND status IN ('ACTIVE', 'REMOTE', 'ON_LEAVE')
+    `
+    return Number(row?.count ?? 0)
+  }
 }

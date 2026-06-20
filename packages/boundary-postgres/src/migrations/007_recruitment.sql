@@ -2,7 +2,7 @@
 -- Creates job_postings and candidates tables, adds a UNIQUE application
 -- constraint (SEC-4), and seeds hr_manager permissions for the recruitment module.
 
-CREATE TABLE job_postings (
+CREATE TABLE IF NOT EXISTS job_postings (
   id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   title         VARCHAR(255) NOT NULL,
   department_id UUID        NOT NULL REFERENCES departments(id),
@@ -14,7 +14,7 @@ CREATE TABLE job_postings (
   closed_at     TIMESTAMPTZ
 );
 
-CREATE TABLE candidates (
+CREATE TABLE IF NOT EXISTS candidates (
   id                   UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   posting_id           UUID        NOT NULL REFERENCES job_postings(id),
   full_name            VARCHAR(255) NOT NULL,
@@ -35,8 +35,8 @@ CREATE TABLE candidates (
     UNIQUE (posting_id, email)
 );
 
-CREATE INDEX idx_candidates_posting_id ON candidates (posting_id);
-CREATE INDEX idx_candidates_status      ON candidates (status);
+CREATE INDEX IF NOT EXISTS idx_candidates_posting_id ON candidates (posting_id);
+CREATE INDEX IF NOT EXISTS idx_candidates_status      ON candidates (status);
 
 -- Seed recruitment permissions for hr_manager
 -- ON CONFLICT DO NOTHING makes this idempotent across re-runs

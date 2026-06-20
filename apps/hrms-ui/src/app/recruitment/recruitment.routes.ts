@@ -8,6 +8,11 @@ export const RECRUITMENT_ROUTES: Routes = [
       import('./recruitment-page.component').then(m => m.RecruitmentPageComponent),
   },
   {
+    path: 'new',
+    loadComponent: () =>
+      import('./job-posting-form-page.component').then(m => m.JobPostingFormPageComponent),
+  },
+  {
     path: 'candidate/:id/hire',
     loadComponent: () =>
       import('./hire-form-page.component').then(m => m.HireFormPageComponent),

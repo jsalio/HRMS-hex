@@ -27,7 +27,7 @@ import { RecruitmentService, JobPosting } from './recruitment.service'
       <div *ngIf="loading()" class="state-loading">
         <span class="spinner"></span>{{ 'common.loading' | translate }}
       </div>
-      <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+      <div *ngIf="error()" class="alert alert-error">{{ error()! | translate }}</div>
 
       <div *ngIf="!loading() && postings().length === 0 && !error()" class="empty-state">
         {{ 'recruitment.empty' | translate }}
@@ -115,8 +115,8 @@ export class RecruitmentPageComponent implements OnInit {
     this.router.navigate(['/recruitment', postingId])
   }
 
-  /** Navigates to the new posting form (placeholder — inline form not in v1 spec). */
+  /** Navigates to the job posting creation form. */
   onCreatePosting(): void {
-    // v1: no inline form — placeholder for future implementation
+    this.router.navigate(['/recruitment/new'])
   }
 }

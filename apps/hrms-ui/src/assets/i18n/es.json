@@ -37,7 +37,8 @@
       "recruitment": "Reclutamiento",
       "reports": "Informes",
       "notifications": "Notificaciones",
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "departments": "Departamentos"
     },
     "nav_section": {
       "configuration": "Configuración"
@@ -441,10 +442,49 @@
         "submit": "Error al procesar la contratación"
       }
     },
+    "posting_form": {
+      "title": "Nueva vacante",
+      "job_title": "Título del puesto",
+      "department_id": "ID de departamento",
+      "description": "Descripción",
+      "requirements": "Requisitos",
+      "requirements_placeholder": "Opcional — experiencia, habilidades, certificaciones...",
+      "submit": "Publicar vacante",
+      "error": {
+        "required": "Título, departamento y descripción son obligatorios",
+        "submit": "Error al crear la vacante"
+      }
+    },
     "error": {
       "load": "Error al cargar los datos",
       "advance": "Error al avanzar el candidato",
       "reject": "Error al rechazar el candidato"
+    }
+  },
+  "departments": {
+    "title": "Departamentos",
+    "subtitle": "Gestiona los departamentos de la empresa",
+    "new_department": "Nuevo departamento",
+    "empty": "No hay departamentos registrados",
+    "confirm_delete": "¿Eliminar el departamento \"{{name}}\"? Esta acción no se puede deshacer.",
+    "delete_blocked": "No se puede eliminar el departamento porque tiene empleados activos asignados.",
+    "table": {
+      "name": "Nombre",
+      "created_at": "Creado",
+      "actions": "Acciones"
+    },
+    "form": {
+      "name": "Nombre del departamento",
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "error": {
+      "load": "Error al cargar los departamentos",
+      "create": "Error al crear el departamento",
+      "update": "Error al actualizar el departamento",
+      "delete": "Error al eliminar el departamento",
+      "required": "El nombre es obligatorio",
+      "conflict": "Ya existe un departamento con ese nombre"
     }
   }
 }

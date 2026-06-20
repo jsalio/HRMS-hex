@@ -32,7 +32,7 @@ const TERMINAL_STATUSES: CandidateStatus[] = ['HIRED', 'REJECTED']
       <div *ngIf="loading()" class="state-loading">
         <span class="spinner"></span>{{ 'common.loading' | translate }}
       </div>
-      <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+      <div *ngIf="error()" class="alert alert-error">{{ error()! | translate }}</div>
 
       <ng-container *ngIf="!loading() && candidate()">
         <div class="profile-card">
@@ -63,7 +63,7 @@ const TERMINAL_STATUSES: CandidateStatus[] = ['HIRED', 'REJECTED']
 
           <app-candidate-pipeline-stepper [status]="candidate()!.status" />
 
-          <div *ngIf="actionError()" class="alert alert-error">{{ actionError() }}</div>
+          <div *ngIf="actionError()" class="alert alert-error">{{ actionError()! | translate }}</div>
 
           <div class="actions" *ngIf="!isTerminal()">
             <button

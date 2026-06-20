@@ -40,7 +40,8 @@
       "recruitment": "Recruitment",
       "reports": "Reports",
       "notifications": "Notifications",
-      "settings": "Settings"
+      "settings": "Settings",
+      "departments": "Departments"
     }
   },
   "roles": {
@@ -441,10 +442,49 @@
         "submit": "Error processing hire"
       }
     },
+    "posting_form": {
+      "title": "New job posting",
+      "job_title": "Job title",
+      "department_id": "Department ID",
+      "description": "Description",
+      "requirements": "Requirements",
+      "requirements_placeholder": "Optional — experience, skills, certifications...",
+      "submit": "Publish posting",
+      "error": {
+        "required": "Title, department, and description are required",
+        "submit": "Error creating the posting"
+      }
+    },
     "error": {
       "load": "Error loading data",
       "advance": "Error advancing candidate",
       "reject": "Error rejecting candidate"
+    }
+  },
+  "departments": {
+    "title": "Departments",
+    "subtitle": "Manage your company's departments",
+    "new_department": "New department",
+    "empty": "No departments found",
+    "confirm_delete": "Delete department \"{{name}}\"? This action cannot be undone.",
+    "delete_blocked": "Cannot delete department because it has active employees assigned.",
+    "table": {
+      "name": "Name",
+      "created_at": "Created",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Department name",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "error": {
+      "load": "Error loading departments",
+      "create": "Error creating department",
+      "update": "Error updating department",
+      "delete": "Error deleting department",
+      "required": "Name is required",
+      "conflict": "A department with that name already exists"
     }
   }
 }

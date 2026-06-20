@@ -11,6 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop'
 const ALL_NAV_ITEMS: NavItem[] = [
   { module: AppModule.DASHBOARD,     labelKey: 'shell.nav.dashboard',     path: '/dashboard',     icon: 'dashboard' },
   { module: AppModule.EMPLOYEES,     labelKey: 'shell.nav.employees',     path: '/employees',     icon: 'group' },
+  { module: AppModule.EMPLOYEES,     labelKey: 'shell.nav.departments',   path: '/departments',   icon: 'corporate_fare' },
   { module: AppModule.ATTENDANCE,    labelKey: 'shell.nav.attendance',    path: '/attendance',    icon: 'calendar_today' },
   { module: AppModule.ABSENCES,      labelKey: 'shell.nav.absences',      path: '/absences',      icon: 'event_busy' },
   { module: AppModule.DOCUMENTS,     labelKey: 'shell.nav.documents',     path: '/documents',     icon: 'description' },
@@ -26,6 +27,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
 const PAGE_TITLES: Record<string, string> = {
   '/dashboard':      'shell.nav.dashboard',
   '/employees':      'shell.nav.employees',
+  '/departments':    'shell.nav.departments',
   '/attendance':     'shell.nav.attendance',
   '/absences':       'shell.nav.absences',
   '/documents':      'shell.nav.documents',

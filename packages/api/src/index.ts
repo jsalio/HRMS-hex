@@ -5,7 +5,7 @@ import {
   listRolesUseCase, createRoleUseCase, updateRoleUseCase, deleteRoleUseCase,
   listEmployeesUseCase, getEmployeeUseCase, createEmployeeUseCase, updateEmployeeUseCase,
   terminateEmployeeUseCase, getEmployeeOnboardingUseCase, updateOnboardingStepUseCase,
-  listDepartmentsUseCase, createDepartmentUseCase,
+  listDepartmentsUseCase, createDepartmentUseCase, updateDepartmentUseCase, deleteDepartmentUseCase,
   listDocumentsUseCase, getDocumentUseCase, createDocumentUseCase, signDocumentUseCase,
   archiveDocumentUseCase, renewDocumentUseCase, listExpiringDocumentsUseCase,
   listAbsenceTypesUseCase, listAbsenceBalancesUseCase, listAbsenceRequestsUseCase,
@@ -35,7 +35,10 @@ app.use('*', logger())
 
 app.route('/auth',        createAuthController(loginUseCase, refreshTokenUseCase, refreshTokenRepo, tokenSvc))
 app.route('/roles',       createRolesController(listRolesUseCase, createRoleUseCase, updateRoleUseCase, deleteRoleUseCase))
-app.route('/departments', createDepartmentsController(listDepartmentsUseCase, createDepartmentUseCase))
+app.route('/departments', createDepartmentsController(
+  listDepartmentsUseCase, createDepartmentUseCase,
+  updateDepartmentUseCase, deleteDepartmentUseCase,
+))
 
 const docsCtrl = createDocumentsController(
   listDocumentsUseCase, getDocumentUseCase, createDocumentUseCase, signDocumentUseCase,

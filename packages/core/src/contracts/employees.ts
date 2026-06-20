@@ -154,6 +154,38 @@ export interface ICreateDepartment {
   create(name: string): Promise<Department>
 }
 
+/** Capability: update a department's name. */
+export interface IUpdateDepartment {
+  /**
+   * Persists the new name for the given department and returns the updated entity.
+   *
+   * @param id - identifier of the department to update
+   * @param name - new name for the department
+   */
+  update(id: string, name: string): Promise<Department>
+}
+
+/** Capability: remove a department from the system. */
+export interface IDeleteDepartment {
+  /**
+   * Removes the department with the given identifier.
+   *
+   * @param id - identifier of the department to delete
+   */
+  delete(id: string): Promise<void>
+}
+
+/** Capability: count employees actively assigned to a department. */
+export interface ICountActiveEmployeesInDepartment {
+  /**
+   * Returns the number of employees with status ACTIVE, REMOTE, or ON_LEAVE
+   * currently assigned to the given department.
+   *
+   * @param departmentId - identifier of the department to check
+   */
+  countActiveEmployees(departmentId: string): Promise<number>
+}
+
 // ── Employee use-case contracts — composed from exactly the needed capabilities
 
 /** Dependencies of the list-employees use case. */
@@ -185,6 +217,12 @@ export type ListDepartmentsRepository = IFindAllDepartments
 /** Department-side dependencies of the create-department use case. */
 export type CreateDepartmentRepository = IFindDepartmentByName & ICreateDepartment
 
+/** Department-side dependencies of the update-department use case. */
+export type UpdateDepartmentRepository = IFindDepartmentById & IFindDepartmentByName & IUpdateDepartment
+
+/** Department-side dependencies of the delete-department use case. */
+export type DeleteDepartmentRepository = IFindDepartmentById & ICountActiveEmployeesInDepartment & IDeleteDepartment
+
 // ── Full persistence ports — single adapters implement every capability ───────
 
 /**
@@ -202,4 +240,6 @@ export interface IEmployeeRepository
  */
 export interface IDepartmentRepository
   extends IFindAllDepartments, IFindDepartmentById,
-          IFindDepartmentByName, ICreateDepartment {}
+          IFindDepartmentByName, ICreateDepartment,
+          IUpdateDepartment, IDeleteDepartment,
+          ICountActiveEmployeesInDepartment {}

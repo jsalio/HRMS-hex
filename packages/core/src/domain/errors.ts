@@ -79,3 +79,17 @@ export class ForbiddenError extends DomainError {
     this.name = 'ForbiddenError'
   }
 }
+
+/**
+ * Raised when a department cannot be deleted because it still has active
+ * employees (status ACTIVE, REMOTE, or ON_LEAVE) assigned to it.
+ */
+export class DepartmentNotEmptyError extends DomainError {
+  /**
+   * @param departmentName - name of the department that cannot be deleted
+   */
+  constructor(departmentName: string) {
+    super(`Department "${departmentName}" has active employees and cannot be deleted`)
+    this.name = 'DepartmentNotEmptyError'
+  }
+}

@@ -22,7 +22,7 @@ import { RecruitmentService, Candidate } from './recruitment.service'
       <div *ngIf="loading()" class="state-loading">
         <span class="spinner"></span>{{ 'common.loading' | translate }}
       </div>
-      <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+      <div *ngIf="error()" class="alert alert-error">{{ error()! | translate }}</div>
 
       <div *ngIf="!loading() && candidates().length === 0 && !error()" class="empty-state">
         {{ 'recruitment.candidate.empty' | translate }}
