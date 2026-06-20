@@ -375,5 +375,76 @@
       "update": "Error updating plan",
       "enroll": "Error enrolling employee"
     }
+  },
+  "recruitment": {
+    "title": "Job Postings",
+    "subtitle": "Manage open positions and track candidates through the pipeline.",
+    "new_posting": "New posting",
+    "empty": "No job postings found",
+    "table": {
+      "title": "Title",
+      "department": "Department",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "OPEN": "Open",
+      "CLOSED": "Closed",
+      "ON_HOLD": "On hold"
+    },
+    "candidate": {
+      "title": "Candidates",
+      "back": "Back",
+      "empty": "No candidates for this posting",
+      "view_candidates": "View candidates",
+      "view_profile": "View profile",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "pipeline": {
+      "APPLIED": "Applied",
+      "SCREENING": "Screening",
+      "INTERVIEW": "Interview",
+      "OFFER": "Offer",
+      "HIRED": "Hired",
+      "REJECTED": "Rejected"
+    },
+    "profile": {
+      "title": "Candidate profile",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "resume": "Resume",
+      "view_resume": "View CV",
+      "notes": "Notes",
+      "advance": "Advance to",
+      "reject": "Reject",
+      "hire": "Hire"
+    },
+    "hire": {
+      "title": "Hire candidate",
+      "hire_date": "Hire date",
+      "salary": "Salary",
+      "department_id": "Department ID",
+      "job_title": "Job title",
+      "corporate_email": "Corporate email",
+      "document_id": "Document ID",
+      "submit": "Confirm hire",
+      "cancel": "Cancel",
+      "error": {
+        "required": "All fields are required",
+        "salary": "Salary must be greater than zero",
+        "submit": "Error processing hire"
+      }
+    },
+    "error": {
+      "load": "Error loading data",
+      "advance": "Error advancing candidate",
+      "reject": "Error rejecting candidate"
+    }
   }
 }

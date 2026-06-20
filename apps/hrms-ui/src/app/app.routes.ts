@@ -61,6 +61,11 @@ export const routes: Routes = [
         canActivate: [permissionGuard(AppModule.BENEFITS, 'canView')],
         loadComponent: () => import('./benefits/my-benefits-page.component').then(m => m.MyBenefitsPageComponent),
       },
+      {
+        path: 'recruitment',
+        canActivate: [permissionGuard(AppModule.RECRUITMENT, 'canView')],
+        loadChildren: () => import('./recruitment/recruitment.routes').then(m => m.RECRUITMENT_ROUTES),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

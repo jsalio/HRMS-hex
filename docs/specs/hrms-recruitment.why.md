@@ -52,19 +52,54 @@ Sub-spec 8 del plan de 10 módulos del sistema HRMS. Las dependencias previas (e
 
 ## Decisiones de implementación
 
-> _Se completan después de ejecutar `/implement`. Placeholder para decisiones que emerjan durante el código._
+### Decisión: `get-candidate.usecase.ts` — 8.º use case no contemplado en el spec
 
-### Decisión: [pendiente]
-- **Qué se decidió**: …
-- **Por qué**: …
+- **Qué se decidió**: Se agregó `GetCandidateUseCase` como caso de uso adicional (no estaba en los 7 del spec).
+- **Por qué**: `CandidateProfilePageComponent` necesita cargar un candidato por ID. Sin este use case, el controlador no puede exponer `GET /candidates/:id` y la UI no puede mostrar el perfil individual.
+- **Alternativa descartada**: Leer el candidato como parte de la lista filtrada por ID → no semántico; el spec reserva `listCandidates` para un postingId, no para lookup por candidateId.
+- **Impacto**: bajo — sigue el mismo patrón que `get-document.usecase.ts` y `get-employee.usecase.ts`.
+
+### Decisión: Password `'RESET_REQUIRED'` para usuarios creados por hire()
+
+- **Qué se decidió**: El campo `password_hash` del usuario creado en la transacción de contratación se almacena como el literal `'RESET_REQUIRED'`.
+- **Por qué**: La capa `boundary-postgres` no tiene acceso a `BunPasswordService` (adaptador HTTP). Generar un hash real requeriría acoplar infraestructura de seguridad al repositorio de persistencia. El literal `'RESET_REQUIRED'` es una cadena que bcrypt nunca puede producir, lo que garantiza que el usuario no pueda autenticarse hasta que un administrador le asigne una contraseña real.
+- **Alternativa descartada**: Pasar el password hasheado como parámetro al use case → obliga al llamador a manejar criptografía fuera del alcance del pipeline de contratación.
+- **Consecuencia**: deuda técnica — se necesita un flujo de "primera contraseña" (password reset) para el empleado recién contratado antes de usar el sistema.
+
+### Decisión: `role_id` del empleado contratado se resuelve con un SELECT inline en hire()
+
+- **Qué se decidió**: Dentro de la transacción `hire()`, se ejecuta `SELECT id FROM roles WHERE name = 'employee' LIMIT 1` para obtener el `role_id` del nuevo usuario.
+- **Por qué**: El repositorio no recibe el `role_id` como parámetro (el use case no conoce IDs de roles internos). Resolver el rol por nombre dentro de la transacción es simple e idempotente.
+- **Alternativa descartada**: Pasar el `role_id` como parámetro desde el use case → el use case tendría que saber sobre roles de sistema, lo que viola la separación de capas.
+
+### Decisión: Formulario de hire usa inputs de texto para `departmentId` y `documentId` (v1)
+
+- **Qué se decidió**: `HireFormPageComponent` no tiene selectors/dropdowns para departamento; el usuario ingresa el UUID directamente.
+- **Por qué**: No existe un `DepartmentsService` ni un `DocumentsService` en la UI del módulo de reclutamiento en v1. Agregar una dependencia cruzada a módulos externos (employees/documents) para poblar un selector queda fuera del alcance del sub-spec 4.
+- **Alternativa descartada**: Autocompletar de departamentos con llamada a `/departments` → requiere implementar el service y el UX completo (typeahead/select); scope creep.
+- **Consecuencia**: deuda UX documentada en la tabla de deuda técnica.
+
+---
+
+## Registro de implementación
+
+**Fecha de implementación**: 2026-06-19
+**Sub-specs completados**: 4 de 4
+
+### Desviaciones del spec
+
+| Sub-spec | Desviación | Motivo | Impacto |
+|---|---|---|---|
+| 1 — Core | `GetCandidateUseCase` agregado como 8.º use case | UI necesita GET /candidates/:id para el perfil de candidato | bajo |
+| 2 — Infra | `password_hash = 'RESET_REQUIRED'` en hire() | BunPasswordService no disponible en boundary-postgres | medio (requiere flujo de reset) |
+| 2 — Infra | `role_id` resuelto con SELECT inline en hire() | Use case no conoce IDs de roles del sistema | bajo |
+| 4 — UI | Inputs de texto para `departmentId` y `documentId` en HireFormPage | Sin DepartmentsService ni DocumentsService en el módulo | bajo (UX degradada) |
 
 ---
 
 ## Desviaciones del spec
 
-> _Se documenta aquí cualquier diferencia entre el spec y la implementación real._
-
-(Vacío — la implementación no ha comenzado)
+Registradas en la tabla de **Registro de implementación** arriba.
 
 ---
 

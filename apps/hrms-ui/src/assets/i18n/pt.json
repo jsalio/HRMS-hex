@@ -375,5 +375,76 @@
       "update": "Erro ao atualizar plano",
       "enroll": "Erro ao inscrever funcionário"
     }
+  },
+  "recruitment": {
+    "title": "Vagas",
+    "subtitle": "Gerencie posições abertas e acompanhe candidatos no pipeline.",
+    "new_posting": "Nova vaga",
+    "empty": "Nenhuma vaga encontrada",
+    "table": {
+      "title": "Título",
+      "department": "Departamento",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "status": {
+      "OPEN": "Aberta",
+      "CLOSED": "Fechada",
+      "ON_HOLD": "Em espera"
+    },
+    "candidate": {
+      "title": "Candidatos",
+      "back": "Voltar",
+      "empty": "Nenhum candidato para esta vaga",
+      "view_candidates": "Ver candidatos",
+      "view_profile": "Ver perfil",
+      "table": {
+        "name": "Nome",
+        "email": "E-mail",
+        "status": "Status",
+        "actions": "Ações"
+      }
+    },
+    "pipeline": {
+      "APPLIED": "Candidatado",
+      "SCREENING": "Triagem",
+      "INTERVIEW": "Entrevista",
+      "OFFER": "Oferta",
+      "HIRED": "Contratado",
+      "REJECTED": "Rejeitado"
+    },
+    "profile": {
+      "title": "Perfil do candidato",
+      "name": "Nome completo",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "resume": "Currículo",
+      "view_resume": "Ver CV",
+      "notes": "Observações",
+      "advance": "Avançar para",
+      "reject": "Rejeitar",
+      "hire": "Contratar"
+    },
+    "hire": {
+      "title": "Formulário de contratação",
+      "hire_date": "Data de contratação",
+      "salary": "Salário",
+      "department_id": "ID do departamento",
+      "job_title": "Cargo",
+      "corporate_email": "E-mail corporativo",
+      "document_id": "ID do documento",
+      "submit": "Confirmar contratação",
+      "cancel": "Cancelar",
+      "error": {
+        "required": "Todos os campos são obrigatórios",
+        "salary": "O salário deve ser maior que zero",
+        "submit": "Erro ao processar a contratação"
+      }
+    },
+    "error": {
+      "load": "Erro ao carregar dados",
+      "advance": "Erro ao avançar candidato",
+      "reject": "Erro ao rejeitar candidato"
+    }
   }
 }
