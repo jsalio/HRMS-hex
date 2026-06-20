@@ -375,5 +375,76 @@
       "update": "Error al actualizar el plan",
       "enroll": "Error al inscribir el empleado"
     }
+  },
+  "recruitment": {
+    "title": "Vacantes",
+    "subtitle": "Gestiona las posiciones abiertas y los candidatos en el pipeline.",
+    "new_posting": "Nueva vacante",
+    "empty": "No hay vacantes registradas",
+    "table": {
+      "title": "Título",
+      "department": "Departamento",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "OPEN": "Abierta",
+      "CLOSED": "Cerrada",
+      "ON_HOLD": "En pausa"
+    },
+    "candidate": {
+      "title": "Candidatos",
+      "back": "Volver",
+      "empty": "No hay candidatos para esta vacante",
+      "view_candidates": "Ver candidatos",
+      "view_profile": "Ver perfil",
+      "table": {
+        "name": "Nombre",
+        "email": "Correo",
+        "status": "Estado",
+        "actions": "Acciones"
+      }
+    },
+    "pipeline": {
+      "APPLIED": "Postulado",
+      "SCREENING": "Revisión",
+      "INTERVIEW": "Entrevista",
+      "OFFER": "Oferta",
+      "HIRED": "Contratado",
+      "REJECTED": "Rechazado"
+    },
+    "profile": {
+      "title": "Perfil del candidato",
+      "name": "Nombre completo",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "resume": "Currículum",
+      "view_resume": "Ver CV",
+      "notes": "Notas",
+      "advance": "Avanzar a",
+      "reject": "Rechazar",
+      "hire": "Contratar"
+    },
+    "hire": {
+      "title": "Formulario de contratación",
+      "hire_date": "Fecha de contratación",
+      "salary": "Salario",
+      "department_id": "ID de departamento",
+      "job_title": "Cargo",
+      "corporate_email": "Correo corporativo",
+      "document_id": "ID de documento",
+      "submit": "Confirmar contratación",
+      "cancel": "Cancelar",
+      "error": {
+        "required": "Todos los campos son obligatorios",
+        "salary": "El salario debe ser mayor a cero",
+        "submit": "Error al procesar la contratación"
+      }
+    },
+    "error": {
+      "load": "Error al cargar los datos",
+      "advance": "Error al avanzar el candidato",
+      "reject": "Error al rechazar el candidato"
+    }
   }
 }

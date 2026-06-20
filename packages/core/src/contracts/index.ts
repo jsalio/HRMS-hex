@@ -20,6 +20,15 @@ export type {
   BenefitPlanType, BenefitPlanData, EmployeeBenefitData,
   CreateBenefitPlanInput, IBenefitRepository,
 } from './benefits'
+export type { CandidateStatus, CandidateData } from '../domain/candidate'
+export type {
+  PostingStatus, JobPostingData,
+  CreateJobPostingInput, CreateCandidateInput, HireInput, HireResult,
+  IRecruitmentRepository, CreateJobPostingDeptRepository,
+  ListJobPostingsRepository, CreateJobPostingRepository, UpdateJobPostingRepository,
+  ListCandidatesRepository, GetCandidateRepository,
+  CreateCandidateRepository, AdvanceCandidateStatusRepository, HireCandidateRepository,
+} from './recruitment'
 export type {
   EmployeeStatus, OnboardingStepName, Department,
   EmployeeSummary, EmployeeOnboarding, EmployeeDetail,

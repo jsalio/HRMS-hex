@@ -3,6 +3,7 @@ import {
   UserRepository, RoleRepository, RefreshTokenRepository,
   EmployeeRepository, DepartmentRepository, DocumentRepository,
   AbsenceRepository, AttendanceRepository, BenefitRepository,
+  RecruitmentRepository,
 } from '@hrms/boundary-postgres'
 import {
   LoginUseCase, RefreshTokenUseCase,
@@ -18,6 +19,9 @@ import {
   CheckOutUseCase, EditAttendanceRecordUseCase,
   ListBenefitPlansUseCase, CreateBenefitPlanUseCase, UpdateBenefitPlanUseCase,
   GetEmployeeBenefitsUseCase, EnrollBenefitUseCase, UnenrollBenefitUseCase,
+  ListJobPostingsUseCase, CreateJobPostingUseCase, UpdateJobPostingUseCase,
+  ListCandidatesUseCase, GetCandidateUseCase, CreateCandidateUseCase,
+  AdvanceCandidateStatusUseCase, HireCandidateUseCase,
 } from '@hrms/core'
 import { JwtTokenService } from './services/jwt-token.service'
 import { BunPasswordService } from './services/bun-password.service'
@@ -35,6 +39,7 @@ const documentRepo     = new DocumentRepository(sql)
 const absenceRepo      = new AbsenceRepository(sql)
 const attendanceRepo   = new AttendanceRepository(sql)
 const benefitRepo      = new BenefitRepository(sql)
+const recruitmentRepo  = new RecruitmentRepository(sql)
 
 // Services
 const tokenSvc    = new JwtTokenService(jwtSecret)
@@ -93,6 +98,16 @@ export const updateBenefitPlanUseCase   = new UpdateBenefitPlanUseCase(benefitRe
 export const getEmployeeBenefitsUseCase = new GetEmployeeBenefitsUseCase(benefitRepo)
 export const enrollBenefitUseCase       = new EnrollBenefitUseCase(benefitRepo)
 export const unenrollBenefitUseCase     = new UnenrollBenefitUseCase(benefitRepo)
+
+// Use cases — recruitment
+export const listJobPostingsUseCase         = new ListJobPostingsUseCase(recruitmentRepo)
+export const createJobPostingUseCase        = new CreateJobPostingUseCase(recruitmentRepo, deptRepo)
+export const updateJobPostingUseCase        = new UpdateJobPostingUseCase(recruitmentRepo)
+export const listCandidatesUseCase          = new ListCandidatesUseCase(recruitmentRepo)
+export const getCandidateUseCase            = new GetCandidateUseCase(recruitmentRepo)
+export const createCandidateUseCase         = new CreateCandidateUseCase(recruitmentRepo)
+export const advanceCandidateStatusUseCase  = new AdvanceCandidateStatusUseCase(recruitmentRepo)
+export const hireCandidateUseCase           = new HireCandidateUseCase(recruitmentRepo)
 
 // Expose repos needed by controllers
 export { refreshTokenRepo, tokenSvc }

@@ -14,6 +14,9 @@ import {
   checkOutUseCase, editAttendanceRecordUseCase,
   listBenefitPlansUseCase, createBenefitPlanUseCase, updateBenefitPlanUseCase,
   getEmployeeBenefitsUseCase, enrollBenefitUseCase, unenrollBenefitUseCase,
+  listJobPostingsUseCase, createJobPostingUseCase, updateJobPostingUseCase,
+  listCandidatesUseCase, getCandidateUseCase, createCandidateUseCase,
+  advanceCandidateStatusUseCase, hireCandidateUseCase,
   refreshTokenRepo, tokenSvc,
 } from './container'
 import { createAuthController } from './controllers/auth.controller'
@@ -24,6 +27,7 @@ import { createDocumentsController } from './controllers/documents.controller'
 import { createAbsencesController } from './controllers/absences.controller'
 import { createAttendanceController } from './controllers/attendance.controller'
 import { createBenefitsController } from './controllers/benefits.controller'
+import { createRecruitmentController } from './controllers/recruitment.controller'
 
 const app = new Hono()
 
@@ -67,6 +71,14 @@ app.route('/attendance', createAttendanceController(
 ))
 
 app.route('/benefit-plans', benefitsCtrl.planRoutes)
+
+const recruitmentCtrl = createRecruitmentController(
+  listJobPostingsUseCase, createJobPostingUseCase, updateJobPostingUseCase,
+  listCandidatesUseCase, getCandidateUseCase, createCandidateUseCase,
+  advanceCandidateStatusUseCase, hireCandidateUseCase,
+)
+app.route('/job-postings', recruitmentCtrl.jobPostingRoutes)
+app.route('/candidates',   recruitmentCtrl.candidateRoutes)
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 
