@@ -441,6 +441,19 @@
         "submit": "Error processing hire"
       }
     },
+    "posting_form": {
+      "title": "New job posting",
+      "job_title": "Job title",
+      "department_id": "Department ID",
+      "description": "Description",
+      "requirements": "Requirements",
+      "requirements_placeholder": "Optional — experience, skills, certifications...",
+      "submit": "Publish posting",
+      "error": {
+        "required": "Title, department, and description are required",
+        "submit": "Error creating the posting"
+      }
+    },
     "error": {
       "load": "Error loading data",
       "advance": "Error advancing candidate",

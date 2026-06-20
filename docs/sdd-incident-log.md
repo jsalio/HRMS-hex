@@ -151,10 +151,50 @@ Se ejecuta automáticamente al inicio de cada `/implement` y Fase 7 de `/dev`.
 
 ---
 
+---
+
+## INC-003 — Acción "Nueva vacante" sin implementar (botón no-op)
+
+**Severidad**: Media
+**Sub-spec afectado**: Sub-spec 4 (UI) — hrms-recruitment
+**Detectado por**: Usuario — sesión 2026-06-20
+
+### Qué se violó
+
+El TDD plan UI (`docs/specs/hrms-recruitment.tdd-plan-ui.md`), Test 2.6:
+
+> `cuando_el_usuario_hace_click_en_crear_vacante_entonces_muestra_formulario_de_nueva_vacante`
+> **Assert**: formulario de creación visible O `Router.navigate` llamado con ruta de creación.
+
+El botón "Nueva vacante" en `RecruitmentPageComponent` fue implementado como un no-op:
+
+```typescript
+onCreatePosting(): void {
+  // v1: no inline form — placeholder for future implementation
+}
+```
+
+### En qué fase ocurrió
+
+Durante `/implement` — Sub-spec 4 (UI). El comportamiento del botón fue registrado en `why.md` como *"scope creep"* sin que eso fuera correcto: el Test 2.6 del plan de TDD está en el contrato. La acción de crear vacante no es una adición fuera de scope — es un requisito explícito del plan.
+
+### Brecha de contexto
+
+El `why.md` documentó la decisión como "formulario de hire usa inputs de texto para `departmentId`/`documentId` — sin selectors en v1". Esta redacción mezclaba una desviación legítima (selectors faltantes) con la omisión del flujo completo de creación. El resultado fue que la acción quedó silenciada sin un test fallido que la detectara, porque los tests de UI no se ejecutan automáticamente en el pipeline actual.
+
+### Resolución — RESUELTO (2026-06-20)
+
+- `apps/hrms-ui/src/app/recruitment/job-posting-form-page.component.ts` — NUEVO. Formulario de creación de vacante con campos: título, departamento (UUID), descripción, requisitos (opcional).
+- `apps/hrms-ui/src/app/recruitment/recruitment.routes.ts` — ruta `new` añadida antes de `:postingId`.
+- `apps/hrms-ui/src/app/recruitment/recruitment-page.component.ts` — `onCreatePosting()` navega a `/recruitment/new`.
+
+---
+
 ## Estado del log
 
 | ID | Estado | Resolución |
 |---|---|---|
 | INC-001 | **Resuelto** | TSDoc completo en toda la superficie pública de los sub-specs 1–5: use cases, contratos, controllers, dominio, repositorios, mappers y services |
 | INC-002 | **Resuelto** | Refactor completo a use cases atómicos + composición de contratos en los 6 módulos. Formalizado en ADR-0001 |
+| INC-003 | **Resuelto** | `JobPostingFormPageComponent` creado; ruta `new` y navegación desde `RecruitmentPageComponent` implementadas |
 | — | Sistémica resuelta | Skill `/sdd-preflight` creado — enforcea CHECK-1 (docs) y CHECK-2 (SRP) antes de cada implementación. ADR-0001 fija el principio como norma del proyecto |

@@ -441,6 +441,19 @@
         "submit": "Error al procesar la contratación"
       }
     },
+    "posting_form": {
+      "title": "Nueva vacante",
+      "job_title": "Título del puesto",
+      "department_id": "ID de departamento",
+      "description": "Descripción",
+      "requirements": "Requisitos",
+      "requirements_placeholder": "Opcional — experiencia, habilidades, certificaciones...",
+      "submit": "Publicar vacante",
+      "error": {
+        "required": "Título, departamento y descripción son obligatorios",
+        "submit": "Error al crear la vacante"
+      }
+    },
     "error": {
       "load": "Error al cargar los datos",
       "advance": "Error al avanzar el candidato",

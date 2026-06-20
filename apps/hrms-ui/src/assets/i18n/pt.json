@@ -441,6 +441,19 @@
         "submit": "Erro ao processar a contratação"
       }
     },
+    "posting_form": {
+      "title": "Nova vaga",
+      "job_title": "Título do cargo",
+      "department_id": "ID do departamento",
+      "description": "Descrição",
+      "requirements": "Requisitos",
+      "requirements_placeholder": "Opcional — experiência, habilidades, certificações...",
+      "submit": "Publicar vaga",
+      "error": {
+        "required": "Título, departamento e descrição são obrigatórios",
+        "submit": "Erro ao criar a vaga"
+      }
+    },
     "error": {
       "load": "Erro ao carregar dados",
       "advance": "Erro ao avançar candidato",

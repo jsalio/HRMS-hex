@@ -115,8 +115,8 @@ export class RecruitmentPageComponent implements OnInit {
     this.router.navigate(['/recruitment', postingId])
   }
 
-  /** Navigates to the new posting form (placeholder — inline form not in v1 spec). */
+  /** Navigates to the job posting creation form. */
   onCreatePosting(): void {
-    // v1: no inline form — placeholder for future implementation
+    this.router.navigate(['/recruitment/new'])
   }
 }
