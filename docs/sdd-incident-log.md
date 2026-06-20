@@ -197,4 +197,56 @@ El `why.md` documentó la decisión como "formulario de hire usa inputs de texto
 | INC-001 | **Resuelto** | TSDoc completo en toda la superficie pública de los sub-specs 1–5: use cases, contratos, controllers, dominio, repositorios, mappers y services |
 | INC-002 | **Resuelto** | Refactor completo a use cases atómicos + composición de contratos en los 6 módulos. Formalizado en ADR-0001 |
 | INC-003 | **Resuelto** | `JobPostingFormPageComponent` creado; ruta `new` y navegación desde `RecruitmentPageComponent` implementadas |
+| INC-004 | **Resuelto** | `| translate` añadido a todos los bindings de error en los 5 componentes del módulo recruitment |
 | — | Sistémica resuelta | Skill `/sdd-preflight` creado — enforcea CHECK-1 (docs) y CHECK-2 (SRP) antes de cada implementación. ADR-0001 fija el principio como norma del proyecto |
+
+---
+
+## INC-004 — Mensajes de error sin pipe `| translate` en componentes recruitment
+
+**Severidad**: Media
+**Sub-spec afectado**: Sub-spec 4 (UI) — hrms-recruitment
+**Detectado por**: Usuario — sesión 2026-06-20
+
+### Qué se violó
+
+Los mensajes de error de todos los componentes Smart del módulo se almacenan como claves i18n en signals de TypeScript:
+
+```typescript
+this.error.set('recruitment.error.load')
+this.validationError.set('recruitment.hire.error.required')
+```
+
+Pero el template los renderiza sin el pipe `| translate`:
+
+```html
+<!-- incorrecto — muestra la clave cruda -->
+<div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+
+<!-- correcto -->
+<div *ngIf="error()" class="alert alert-error">{{ error()! | translate }}</div>
+```
+
+El resultado es que el usuario ve `recruitment.error.load` en pantalla en lugar de "Error al cargar los datos".
+
+### En qué fase ocurrió
+
+Durante `/implement` — Sub-spec 4 (UI). El patrón `{{ signal() }}` sin `| translate` fue aplicado consistentemente en los 5 componentes Smart del módulo.
+
+### Brecha de contexto
+
+El script `bun scripts/i18n.ts scan` detecta únicamente claves literales en la forma `'key' | translate` dentro del template. No detecta el patrón donde la clave vive en un signal de TypeScript y se renderiza con `{{ signal() }}`. Esta clase de error no es visible hasta que el usuario activa el estado de error en la UI.
+
+### Resolución — RESUELTO (2026-06-20)
+
+`| translate` añadido a todos los bindings de error en los 5 componentes afectados:
+
+| Componente | Bindings corregidos |
+|---|---|
+| `recruitment-page.component.ts` | `error()` |
+| `job-posting-detail-page.component.ts` | `error()` |
+| `candidate-profile-page.component.ts` | `error()`, `actionError()` |
+| `hire-form-page.component.ts` | `error()`, `validationError()` |
+| `job-posting-form-page.component.ts` | `error()`, `validationError()` |
+
+Herramienta `scripts/i18n.ts` mejorada: nueva opción `scan-ts` que detecta claves pasadas a `.set()` en TypeScript.

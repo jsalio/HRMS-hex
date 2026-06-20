@@ -21,8 +21,8 @@ import { RecruitmentService, CreateJobPostingDto } from './recruitment.service'
       </div>
 
       <div class="form-card">
-        <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
-        <div *ngIf="validationError()" class="alert alert-error">{{ validationError() }}</div>
+        <div *ngIf="error()" class="alert alert-error">{{ error()! | translate }}</div>
+        <div *ngIf="validationError()" class="alert alert-error">{{ validationError()! | translate }}</div>
 
         <div class="form-stack">
           <div class="form-field">
